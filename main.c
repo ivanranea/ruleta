@@ -8,13 +8,8 @@
 #define APUESTAMAX 10
 #define TRUE 1
 #define FALSE 0
-// TODO Convertir en constantes
-//int numerosRojos[]={1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36};
-//int numerosNegros[]={2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35};
-//int columna1[]={1,4,7,10,13,16,19,22,25,28,31,34};
-//int columna2[]={2,5,8,11,14,17,20,23,26,29,32,35};
-//int columna3[]={3,6,9,12,15,18,21,24,27,30,33,36};
-#define A_NUMERO 1
+
+#define A_PLENO 1
 
 #define A_DOCENAS 2
 #define A_PRIMER_DOCENA 1
@@ -37,7 +32,12 @@
 #define A_PRIMER_COLUMNA 1
 #define A_SEGUNDA_COLUMNA 2
 #define A_TERCERA_COLUMNA 3
-
+int dineroTotalJugador = 200; //Dinero inicial del jugador, no se discriminan las fichas.
+const int numerosRojos[]={1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36};
+const int numerosNegros[]={2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35};
+const int columna1[]={1,4,7,10,13,16,19,22,25,28,31,34};
+const int columna2[]={2,5,8,11,14,17,20,23,26,29,32,35};
+const int columna3[]={3,6,9,12,15,18,21,24,27,30,33,36};
 
 typedef struct {
     int tipo; // Numero, paridad, color, fila, etc
@@ -65,7 +65,7 @@ void imprimirApuesta(Apuesta a){
 //    int tipoColumna [3];
 //    int apuestaGanada = FALSE;
 //    int plenos[nApuestas];
-//    int dineroTotalJugador = 200; //Dinero inicial del jugador, no se discriminan las fichas.
+//
 //    int fichasTemp = 0;
 //    int i, j;
 //    i = 0;
@@ -313,10 +313,14 @@ void imprimirApuesta(Apuesta a){
 //    return 0;
 //}
 
-int registrarMontoFichas(){
-    // TODO Pasar como parametro dineroTotalJugador
+int registrarMontoFichas(int dineroTotalJugador){
+    // Pasar como parametro dineroTotalJugador
+    int fichasTemp = 0;
+    int fichasApostadas = 0;
+
     while(TRUE) // Inicio ingreso de fichas para la apuesta
     {
+
         printf("\nFichas disponibles: $1, $2, $5, $10, $50, $100\nDinero disponible: %d\nCuando desee finalizar la apuesta ingrese 0\nIngrese la ficha que desea apostar: ", dineroTotalJugador);
         scanf("%d", &fichasTemp);
 
@@ -341,26 +345,31 @@ int registrarMontoFichas(){
 
         if(fichasTemp==0)
         {
+
             break;
         }else
         {
-            fichasApostadas[i] += fichasTemp;
 
-            if(fichasApostadas[i]>dineroTotalJugador)
+            if(fichasTemp>dineroTotalJugador)
             {
+
                 printf("\nEl valor de las fichas excede su dinero disponible ($%d),\nvuelva a ingresar las fichas.\n", dineroTotalJugador);
-                fichasApostadas[i] = 0;
+                dineroTotalJugador += fichasApostadas;
+                fichasApostadas = 0;
                 fichasTemp = 0;
+
 
             }else
             {
-                printf("\nApuesta total: $%d\n", fichasApostadas[i]);
                 dineroTotalJugador -= fichasTemp;
+                fichasApostadas += fichasTemp;
+                printf("\nApuesta total: $%d\n", fichasApostadas);
+
             }
 
         }
     }
-    // TODO retornar entero que representa fichas
+    return fichasApostadas; //retornar entero que representa fichas
 }
 
 
@@ -374,9 +383,9 @@ Apuesta registrarApuestaPlenos(){
         scanf("%d", &valor);
     }
     Apuesta a;
-    a.tipo = A_NUMERO;
+    a.tipo = A_PLENO;
     a.valor = valor;
-    a.fichas = registrarMontoFichas();
+    a.fichas = registrarMontoFichas(dineroTotalJugador);
     return a;
 }
 
@@ -391,14 +400,15 @@ Apuesta registrarApuestaDocenas(){
         scanf("%d", &valor);
     }
     Apuesta a;
-    a.tipo = A_DOCENA;
+    a.tipo = A_DOCENAS;
     a.valor = valor;
-    a.fichas = registrarMontoFichas();
+    a.fichas = registrarMontoFichas(dineroTotalJugador);
     return a;
 }
 
 void preguntarApuestasAlUsuario(int nApuestas){
-    Apuesta apuestas[];
+    Apuesta apuestas[7];
+    int i;
     printf("Elija cuál será el nro de tipo de apuesta a realizar:\n");
 
     for(i=0; i<nApuestas; i++) // Comienzo for apuestas
@@ -424,10 +434,11 @@ void preguntarApuestasAlUsuario(int nApuestas){
                 apuestas[i] = registrarApuestaDocenas();
                 break;
 
-            case 3: break; // Falta
-                // TODO - Ivi
-            case 4: break; // Pasa
-                // TODO - Ivi
+            case A_FALTA: break; // Falta
+                apuestas[i] = registrarMontoFichas(dineroTotalJugador);
+
+            case A_PASA: break; // Pasa
+                apuestas[i] = registrarMontoFichas(dineroTotalJugador);
             case 5: // Color
                 // TODO Mover a una funcion - Lore
 
@@ -477,7 +488,7 @@ void preguntarApuestasAlUsuario(int nApuestas){
     // TODO retornar array
 }
 
-void main(){
+/*void main3(){
     // Esta funcion es un test para preguntarApuestasAlUsuario()
     int dineroTotalJugador = 1000;
     printf("Elija la cantidad de apuestas: ");
@@ -487,10 +498,10 @@ void main(){
     for (int i=0;i<nApuestas;i++){
         imprimirApuesta(apuestas[i])
     }
-}
+}*/
 
-void main3(){
+void main(){
     // Esta funcion es un test para registrarMontoFichas
-    int resultado = registrarMontoFichas(500);
+    int resultado = registrarMontoFichas(dineroTotalJugador);
     printf("La cantidad de fichas apostadas es: %d\n", resultado);
 }
