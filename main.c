@@ -407,7 +407,7 @@ Apuesta registrarApuestaDocenas(){
 }
 
 void preguntarApuestasAlUsuario(int nApuestas){
-    Apuesta apuestas[7];
+    Apuesta apuestas[nApuestas];
     int i;
     printf("Elija cuál será el nro de tipo de apuesta a realizar:\n");
 
