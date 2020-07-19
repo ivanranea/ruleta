@@ -524,26 +524,16 @@ void preguntarApuestasAlUsuario(int nApuestas){
                 apuestas[i] = registrarApuestaDocenas();
                 break;
 
-
-            case A_FALTA: break; // Falta
+            case A_FALTA:  // Falta
                 apuestas[i] = registrarApuestaFalta();
+                break;
 
-            case A_PASA: break; // Pasa
+            case A_PASA:  // Pasa
                 apuestas[i] = registrarApuestaPasa();
-            case 5: // Color
-                // TODO Mover a una funcion - Lore
-
-                printf("Ingrese el color al desea apostar:\n1.Rojo\n2.Negro\n");
-                scanf("%d", &tipoColor[i]);
-                while(tipoColor[i]<=0 || tipoColor[i]>2)
-                {
-                    printf("Ingreso incorrecto, elija a qué docena desea apostar (1 o 2): ");
-                    scanf("%d", &tipoColor[i]);
-                }
+                break;
 
             case A_COLOR: // Color
                 apuestas[i] = registrarApuestaColor(); // TODO Mover a una funcion - Lore
-
                 break;
 
             case A_PARIDAD: // Par o Impar
