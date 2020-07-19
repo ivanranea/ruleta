@@ -406,8 +406,98 @@ Apuesta registrarApuestaDocenas(){
     return a;
 }
 
+Apuesta registrarApuestaDocenas(){
+    int valor;
+    printf("Ingrese a qué docena desea apostar:\n%d.Primera docena\n%d.Segunda docena\n%d.Tercera docena\n",
+            A_PRIMER_DOCENA, A_SEGUNDA_DOCENA, A_TERCERA_DOCENA);
+    scanf("%d", &valor);
+    while(valor<=0 || valor>3)
+    {
+        printf("Ingreso incorrecto, elija a qué docena desea apostar (1, 2 o 3): ");
+        scanf("%d", &valor);
+    }
+    Apuesta a;
+    a.tipo = A_DOCENAS;
+    a.valor = valor;
+    a.fichas = registrarMontoFichas(dineroTotalJugador);
+    return a;
+}
+
+Apuesta registrarApuestaFalta(){
+
+    Apuesta a;
+    a.tipo = A_FALTA;
+    a.valor = 0;
+    a.fichas = registrarMontoFichas(dineroTotalJugador);
+    return a;
+}
+
+Apuesta registrarApuestaPasa(){
+
+    Apuesta a;
+    a.tipo = A_PASA;
+    a.valor = 0;
+    a.fichas = registrarMontoFichas(dineroTotalJugador);
+    return a;
+}
+
+
+Apuesta registrarApuestaColor(){
+    int valor;
+    printf("Ingrese el color al desea apostar:\n1.Rojo\n2.Negro\n");
+    scanf("%d", &valor);
+    while(valor<=0 || valor>2)
+    {
+        printf("Ingreso incorrecto, elija a qué docena desea apostar (1 o 2): ");
+        scanf("%d", &valor);
+    }
+
+    Apuesta a;
+    a.tipo = A_COLOR;
+    a.valor = valor;
+    a.fichas = registrarMontoFichas();
+    return a;
+}
+
+Apuesta registrarApuestaParidad(){
+    int valor;
+    printf("Ingrese si desea apostar a los números pares o impares:\n1.Par\n2.Impar\n");
+    scanf("%d", &valor);
+    while(valor<=0 || valor>2)
+    {
+        printf("Ingreso incorrecto, elija si desea apostar a los números pares o impares (1 o 2): ");
+        scanf("%d", &valor);
+    }
+
+    Apuesta a;
+    a.tipo = A_PARIDAD;
+    a.valor = valor;
+    a.fichas = registrarMontoFichas();
+    return a;
+}
+
+Apuesta registrarApuestaColumna(){
+    int valor;
+    printf("Ingrese el tipo de columna a la que desea apostar:\n1.Columna del 1\n2.Columna del 2\n3.Columna del 3\n");
+    scanf("%d", &tipoColumna[i]);
+    while(valor<=0 || valor>3)
+    {
+        printf("Ingreso incorrecto, elija a qué columna desea apostar (1, 2 o 3): ");
+        scanf("%d", &valor);
+    }
+
+
+    Apuesta a;
+    a.tipo = A_COLUMNA;
+    a.valor = valor;
+    a.fichas = registrarMontoFichas();
+    return a;
+}
+
+
+
 void preguntarApuestasAlUsuario(int nApuestas){
-    Apuesta apuestas[7];
+    Apuesta apuestas[nApuestas];
     int i;
     printf("Elija cuál será el nro de tipo de apuesta a realizar:\n");
 
@@ -426,7 +516,7 @@ void preguntarApuestasAlUsuario(int nApuestas){
 
         switch(tipoApuestas[i]) //Inicio Swith Tipo Apuestas
         {
-            case A_NUMERO: //Plenos
+            case A_PLENO: //Plenos
                 apuestas[i] = registrarApuestaPlenos();
                 break;
 
@@ -434,11 +524,12 @@ void preguntarApuestasAlUsuario(int nApuestas){
                 apuestas[i] = registrarApuestaDocenas();
                 break;
 
+
             case A_FALTA: break; // Falta
-                apuestas[i] = registrarMontoFichas(dineroTotalJugador);
+                apuestas[i] = registrarApuestaFalta();
 
             case A_PASA: break; // Pasa
-                apuestas[i] = registrarMontoFichas(dineroTotalJugador);
+                apuestas[i] = registrarApuestaPasa();
             case 5: // Color
                 // TODO Mover a una funcion - Lore
 
@@ -449,30 +540,20 @@ void preguntarApuestasAlUsuario(int nApuestas){
                     printf("Ingreso incorrecto, elija a qué docena desea apostar (1 o 2): ");
                     scanf("%d", &tipoColor[i]);
                 }
+
+            case A_COLOR: // Color
+                apuestas[i] = registrarApuestaColor(); // TODO Mover a una funcion - Lore
+
                 break;
 
-            case 6: // Par o Impar
+            case A_PARIDAD: // Par o Impar
+                apuestas[i] = registrarApuestaParidad();
                 // TODO Mover a una funcion - Lore
-
-                printf("Ingrese si desea apostar a los números pares o impares:\n1.Par\n2.Impar\n");
-                scanf("%d", &parOimpar[i]);
-                while(parOimpar[i]<=0 || parOimpar[i]>2)
-                {
-                    printf("Ingreso incorrecto, elija si desea apostar a los números pares o impares (1 o 2): ");
-                    scanf("%d", &parOimpar[i]);
-                }
                 break;
 
-            case 7: // Columnas
+            case A_COLUMNA: // Columnas =
+                apuestas[i] = registrarApuestaColumna();
                 // TODO Mover a una funcion - Lore
-
-                printf("Ingrese el tipo de columna a la que desea apostar:\n1.Columna del 1\n2.Columna del 2\n3.Columna del 3\n");
-                scanf("%d", &tipoColumna[i]);
-                while(tipoColumna[i]<=0 || tipoColumna[i]>3)
-                {
-                    printf("Ingreso incorrecto, elija a qué columna desea apostar (1, 2 o 3): ");
-                    scanf("%d", &tipoColumna[i]);
-                }
                 break;
 
             default: break;
