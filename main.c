@@ -90,7 +90,7 @@ void imprimirApuesta(Apuesta a){
 //    for(i=0; i<nApuestas; i++) // Inicio for principal
 //    {
 //
-//        switch(tipoApuestas[i])
+//        switch(tipoApuestas)
 //        {
 //            case 1: //Numeros Plenos
 //
@@ -406,23 +406,6 @@ Apuesta registrarApuestaDocenas(){
     return a;
 }
 
-Apuesta registrarApuestaDocenas(){
-    int valor;
-    printf("Ingrese a qué docena desea apostar:\n%d.Primera docena\n%d.Segunda docena\n%d.Tercera docena\n",
-            A_PRIMER_DOCENA, A_SEGUNDA_DOCENA, A_TERCERA_DOCENA);
-    scanf("%d", &valor);
-    while(valor<=0 || valor>3)
-    {
-        printf("Ingreso incorrecto, elija a qué docena desea apostar (1, 2 o 3): ");
-        scanf("%d", &valor);
-    }
-    Apuesta a;
-    a.tipo = A_DOCENAS;
-    a.valor = valor;
-    a.fichas = registrarMontoFichas(dineroTotalJugador);
-    return a;
-}
-
 Apuesta registrarApuestaFalta(){
 
     Apuesta a;
@@ -455,7 +438,7 @@ Apuesta registrarApuestaColor(){
     Apuesta a;
     a.tipo = A_COLOR;
     a.valor = valor;
-    a.fichas = registrarMontoFichas();
+    a.fichas = registrarMontoFichas(dineroTotalJugador);
     return a;
 }
 
@@ -472,14 +455,14 @@ Apuesta registrarApuestaParidad(){
     Apuesta a;
     a.tipo = A_PARIDAD;
     a.valor = valor;
-    a.fichas = registrarMontoFichas();
+    a.fichas = registrarMontoFichas(dineroTotalJugador);
     return a;
 }
 
 Apuesta registrarApuestaColumna(){
     int valor;
     printf("Ingrese el tipo de columna a la que desea apostar:\n1.Columna del 1\n2.Columna del 2\n3.Columna del 3\n");
-    scanf("%d", &tipoColumna[i]);
+    scanf("%d", &valor);
     while(valor<=0 || valor>3)
     {
         printf("Ingreso incorrecto, elija a qué columna desea apostar (1, 2 o 3): ");
@@ -490,31 +473,28 @@ Apuesta registrarApuestaColumna(){
     Apuesta a;
     a.tipo = A_COLUMNA;
     a.valor = valor;
-    a.fichas = registrarMontoFichas();
+    a.fichas = registrarMontoFichas(dineroTotalJugador);
     return a;
 }
 
 
 
-void preguntarApuestasAlUsuario(int nApuestas){
-    Apuesta apuestas[nApuestas];
-    int i;
-    printf("Elija cuál será el nro de tipo de apuesta a realizar:\n");
+void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas){
 
-    for(i=0; i<nApuestas; i++) // Comienzo for apuestas
+    for(int i=0; i<nApuestas; i++) // Comienzo for apuestas
     {
-
+        int tipoApuestas;
         printf("\n1.Pleno\n2.Docenas\n3.Falta (1 al 18)\n4.Pasa (19 al 36)\n5.Color\n6.Pares o Impares\n7.Columnas\n");
         printf("\nApuesta nro %d: ", i+1);
-        scanf("%d", &tipoApuestas[i]);
+        scanf("%d", &tipoApuestas);
 
-        while(tipoApuestas[i]<=0 || tipoApuestas[i]>7)
+        while(tipoApuestas<=0 || tipoApuestas>7)
         {
             printf("Ingreso incorrecto, elija un tipo de apuesta (1 al 7): ");
-            scanf("%d", &tipoApuestas[i]);
+            scanf("%d", &tipoApuestas);
         }
 
-        switch(tipoApuestas[i]) //Inicio Swith Tipo Apuestas
+        switch(tipoApuestas) //Inicio Swith Tipo Apuestas
         {
             case A_PLENO: //Plenos
                 apuestas[i] = registrarApuestaPlenos();
@@ -549,30 +529,25 @@ void preguntarApuestasAlUsuario(int nApuestas){
             default: break;
 
         } // Fin Switch Tipo Apuestas
-
-
-
-
-
-
     } //Fin for Apuestas
-    // TODO retornar array
 }
 
-/*void main3(){
+int main(){
     // Esta funcion es un test para preguntarApuestasAlUsuario()
     int dineroTotalJugador = 1000;
+    int nApuestas;
     printf("Elija la cantidad de apuestas: ");
     scanf("%d", &nApuestas);
-
-    Apuesta apuestas = preguntarApuestasAlUsuario(nApuestas);
+    Apuesta apuestas[nApuestas];
+    preguntarApuestasAlUsuario(apuestas, nApuestas);
     for (int i=0;i<nApuestas;i++){
-        imprimirApuesta(apuestas[i])
+        imprimirApuesta(apuestas[i]);
     }
-}*/
-
-void main(){
-    // Esta funcion es un test para registrarMontoFichas
-    int resultado = registrarMontoFichas(dineroTotalJugador);
-    printf("La cantidad de fichas apostadas es: %d\n", resultado);
+    return 0;
 }
+
+//int main(){
+//    // Esta funcion es un test para registrarMontoFichas
+//    int resultado = registrarMontoFichas(dineroTotalJugador);
+//    printf("La cantidad de fichas apostadas es: %d\n", resultado);
+//}
