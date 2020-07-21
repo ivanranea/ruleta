@@ -33,287 +33,287 @@
 #define A_SEGUNDA_COLUMNA 2
 #define A_TERCERA_COLUMNA 3
 
-const int numerosRojos[]={1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36};
-const int numerosNegros[]={2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35};
-const int columna1[]={1,4,7,10,13,16,19,22,25,28,31,34};
-const int columna2[]={2,5,8,11,14,17,20,23,26,29,32,35};
-const int columna3[]={3,6,9,12,15,18,21,24,27,30,33,36};
+const int numerosRojos[]= {1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36};
+const int numerosNegros[]= {2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35};
+const int columna1[]= {1,4,7,10,13,16,19,22,25,28,31,34};
+const int columna2[]= {2,5,8,11,14,17,20,23,26,29,32,35};
+const int columna3[]= {3,6,9,12,15,18,21,24,27,30,33,36};
 
-typedef struct {
+typedef struct
+{
     int tipo; // Numero, paridad, color, fila, etc
     int valor; // 34, rojo, par, fila 2
     int fichas; // cantidad de fichas apostadas
 } Apuesta;
 // Para apostar 5 fichas al rojo Apuesta(tipo: 5, valor: 1, fichas: 5)
 
-void imprimirApuesta(Apuesta a){
+void imprimirApuesta(Apuesta a)
+{
     printf("Apuesta | tipo: %d | valor: %d | fichas: %d |\n", a.tipo, a.valor, a.fichas);
 }
 
 
-//int main2()
-//{
-//    int giro = 20;
-//    int ganancia = 0;
-//    int perdida = 0;
-//    int nApuestas = 8;
-//    int tipoApuestas[nApuestas]; //Array en el que se va a guardar el código del tipo de apuesta
-//    int fichasApostadas[nApuestas]; //Array en el que se va a guardar la cantidad de fichas apostadas en un tipo de apuesta
-//    int tipoDocena [3];
-//    int tipoColor [2];
-//    int parOimpar [2];
-//    int tipoColumna [3];
-//    int apuestaGanada = FALSE;
-//    int plenos[nApuestas];
-//
-//    int fichasTemp = 0;
-//    int i, j;
-//    i = 0;
-//    j = 0;
-//
-//
-//
-//    ///INICIO FUNCION INGRESO DE APUESTAS
-//
-//    printf("Elija la cantidad de apuestas: ");
-//    scanf("%d", &nApuestas);
-//
-//    for(i=0; i<nApuestas; i++)
-//    {
-//        fichasApostadas[i] = 0;
-//    }
-//
-//    preguntarApuestasAlUsuario(nApuestas, &tipoApuetas, &fichasApostadas);
-//
-//    /// INICIO FUNCION RESOLUCION DE PREMIOS
-//
-//    for(i=0; i<nApuestas; i++) // Inicio for principal
-//    {
-//
-//        switch(tipoApuestas)
-//        {
-//            case 1: //Numeros Plenos
-//
-//                if(giro==plenos[i])
-//                {
-//                    ganancia += 35*fichasApostadas[i];
-//
-//                }else
-//                {
-//                    perdida += fichasApostadas[i];
-//                }
-//                break;
-//
-//            case 2: //Docenas
-//                switch(tipoDocena[i])
-//                {
-//                    case 1: //Primera docena
-//
-//                        if(giro>0 && giro<=12)
-//                        {
-//                            ganancia += 3*fichasApostadas[i];
-//
-//                        }else
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//
-//                    case 2: //Segunda docena
-//
-//                        if(giro>12 && giro<=24)
-//                        {
-//                            ganancia += 3*fichasApostadas[i];
-//
-//                        }else
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//
-//                    case 3: //Tercera docena
-//
-//                        if(giro>24)
-//                        {
-//                            ganancia += 3*fichasApostadas[i];
-//
-//                        }else
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//                }
-//
-//            case 3: //Falta (1 al 18)
-//
-//                if(giro>0 && giro<=18)
-//                {
-//                    ganancia += 2*fichasApostadas[i];
-//
-//                }else
-//                {
-//                    perdida += fichasApostadas[i];
-//                }
-//                break;
-//
-//            case 4: //Pasa (19 al 36)
-//
-//                if(giro>=19 && giro<=36)
-//                {
-//                    ganancia += 2*fichasApostadas[i];
-//
-//                }else
-//                {
-//                    perdida += fichasApostadas[i];
-//                }
-//                break;
-//
-//            case 5: //Color
-//
-//                switch(tipoColor[i])
-//                {
-//                    case 1: //Rojo
-//
-//                        apuestaGanada = FALSE;
-//                        for(j=0; j<CANTROJOS; j++)
-//                        {
-//                            if(giro==numerosRojos[j])
-//                            {
-//                                ganancia += 2*fichasApostadas[i];
-//                                apuestaGanada = TRUE;
-//                                break;
-//
-//                            }
-//                        }
-//                        if(apuestaGanada==FALSE)
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//
-//                    case 2: //Negro
-//
-//                        apuestaGanada = FALSE;
-//                        for(j=0; j<CANTNEGROS; j++)
-//                        {
-//                            if(giro==numerosNegros[j])
-//                            {
-//                                ganancia += 2*fichasApostadas[i];
-//                                apuestaGanada = TRUE;
-//                                break;
-//
-//                            }
-//                        }
-//                        if(apuestaGanada==FALSE)
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//                }
-//
-//            case 6: //Pares o Impares
-//
-//                switch(parOimpar[i])
-//                {
-//                    case 1: //Par
-//
-//                        if(giro%2==0)
-//                        {
-//                            ganancia += 2*fichasApostadas[i];
-//
-//                        }else
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//
-//                    case 2: //Impar
-//
-//                        if(giro%2!=0)
-//                        {
-//                            ganancia += 2*fichasApostadas[i];
-//
-//                        }else
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//                }
-//
-//            case 7: // Columnas
-//
-//                apuestaGanada = FALSE;
-//                switch(tipoColumna[i])
-//                {
-//                    case 1: //Columna del 1
-//
-//
-//                        for(j=0; j<NROSPORCOLUMNA; j++)
-//                        {
-//                            if(giro==columna1[j])
-//                            {
-//                                ganancia += 3*fichasApostadas[i];
-//                                apuestaGanada = TRUE;
-//                                break;
-//                            }
-//                        }
-//                        if(apuestaGanada==FALSE)
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//
-//                    case 2: //Columna del 2
-//
-//                        for(j=0; j<NROSPORCOLUMNA; j++)
-//                        {
-//                            if(giro==columna2[j])
-//                            {
-//                                ganancia += 3*fichasApostadas[i];
-//                                apuestaGanada = TRUE;
-//                                break;
-//
-//                            }
-//                        }
-//                        if(apuestaGanada==FALSE)
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//
-//                    case 3: //Columna del 3
-//
-//                        for(j=0; j<NROSPORCOLUMNA; j++)
-//                        {
-//                            if(giro==columna3[j])
-//                            {
-//                                ganancia += 3*fichasApostadas[i];
-//                                apuestaGanada = TRUE;
-//                                break;
-//
-//                            }
-//                        }
-//                        if(apuestaGanada==FALSE)
-//                        {
-//                            perdida += fichasApostadas[i];
-//                        }
-//                        break;
-//                } //Fin switch Columnas
-//
-//            default: break;
-//
-//        } //Fin switch principal
-//
-//
-//    } //Fin for principal
-//
-//    printf("\nGanancias: %d\n", ganancia);
-//    printf("Perdidas: %d\n", perdida);
-//
-//    return 0;
-//}
+int main2()
+{
+    int giro = 20;
+    int ganancia = 0;
+    int perdida = 0;
+    int nApuestas = 8;
+    int tipoApuestas[nApuestas]; //Array en el que se va a guardar el código del tipo de apuesta
+    int fichasApostadas[nApuestas]; //Array en el que se va a guardar la cantidad de fichas apostadas en un tipo de apuesta
+    int tipoDocena [3];
+    int tipoColor [2];
+    int parOimpar [2];
+    int tipoColumna [3];
+    int apuestaGanada = FALSE;
+    int plenos[nApuestas];
 
-int registrarMontoFichas(int *dineroTotalJugador){
+    int fichasTemp = 0;
+    int i, j;
+    i = 0;
+    j = 0;
+
+    /// INICIO FUNCION RESOLUCION DE PREMIOS
+
+    void resolucionApuestas(Apuesta *apuestas, int nApuestas)
+    {
+        for(i=0; i<nApuestas; i++) // Inicio for principal
+        {
+            Apuesta a = apuestas[i];
+            switch(a.tipo)
+            {
+            case A_PLENOS: //Numeros Plenos
+
+                if(giro==a.valor)
+                {
+                    ganancia += 35*a.fichas;
+
+                }
+                else
+                {
+                    perdida += a.fichas;
+                }
+                break;
+
+            case A_DOCENAS: //Docenas
+                switch(a.valor)
+                {
+                case A_PRIMER_DOCENA: //Primera docena
+
+                    if(giro>0 && giro<=12)
+                    {
+                        ganancia += 3*a.fichas;
+
+                    }
+                    else
+                    {
+                        perdida += a.fichas;
+                    }
+                    break;
+
+                case A_SEGUNDA_DOCENA: //Segunda docena
+
+                    if(giro>12 && giro<=24)
+                    {
+                        ganancia += 3*a.fichas;
+
+                    }
+                    else
+                    {
+                        perdida += a.fichas;
+                    }
+                    break;
+
+                case A_TERCERA_DOCENA: //Tercera docena
+
+                    if(giro>24)
+                    {
+                        ganancia += 3*a.fichas;
+
+                    }
+                    else
+                    {
+                        perdida += a.fichas;
+                    }
+                    break;
+                }
+
+            case A_FALTA: //Falta (1 al 18)
+
+                if(giro>0 && giro<=18)
+                {
+                    ganancia += 2*a.fichas;
+
+                }
+                else
+                {
+                    perdida += a.fichas;
+                }
+                break;
+
+            case A_PASA: //Pasa (19 al 36)
+
+                if(giro>=19 && giro<=36)
+                {
+                    ganancia += 2*a.fichas;
+
+                }
+                else
+                {
+                    perdida += a.fichas;
+                }
+                break;
+
+            case A_COLOR: //Color
+
+                switch(a.valor)
+                {
+                case A_COLOR_ROJO: //Rojo
+
+                    apuestaGanada = FALSE;
+                    for(j=0; j<CANTROJOS; j++)
+                    {
+                        if(giro==numerosRojos[j])
+                        {
+                            ganancia += 2*a.fichas;
+                            apuestaGanada = TRUE;
+                            break;
+
+                        }
+                    }
+                    if(apuestaGanada==FALSE)
+                    {
+                        perdida += a.fichas;
+                    }
+                    break;
+
+                case A_COLOR_NEGRO: //Negro
+
+                    apuestaGanada = FALSE;
+                    for(j=0; j<CANTNEGROS; j++)
+                    {
+                        if(giro==numerosNegros[j])
+                        {
+                            ganancia += 2*fichasApostadas[i];
+                            apuestaGanada = TRUE;
+                            break;
+
+                        }
+                    }
+                    if(apuestaGanada==FALSE)
+                    {
+                        perdida += fichasApostadas[i];
+                    }
+                    break;
+                }
+
+            case A_PARIDAD: //Pares o Impares
+
+                switch(a.valor)
+                {
+                case A_PARIDAD_PAR: //Par
+
+                    if(giro%2==0)
+                    {
+                        ganancia += 2*a.fichas;
+
+                    }
+                    else
+                    {
+                        perdida += a.fichas;
+                    }
+                    break;
+
+                case A_PARIDAD_IMPAR: //Impar
+
+                    if(giro%2!=0)
+                    {
+                        ganancia += 2*a.fichas;
+
+                    }
+                    else
+                    {
+                        perdida += a.fichas;
+                    }
+                    break;
+                }
+
+            case 7: // Columnas
+
+                apuestaGanada = FALSE;
+                switch(tipoColumna[i])
+                {
+                case 1: //Columna del 1
+
+
+                    for(j=0; j<NROSPORCOLUMNA; j++)
+                    {
+                        if(giro==columna1[j])
+                        {
+                            ganancia += 3*fichasApostadas[i];
+                            apuestaGanada = TRUE;
+                            break;
+                        }
+                    }
+                    if(apuestaGanada==FALSE)
+                    {
+                        perdida += fichasApostadas[i];
+                    }
+                    break;
+
+                case 2: //Columna del 2
+
+                    for(j=0; j<NROSPORCOLUMNA; j++)
+                    {
+                        if(giro==columna2[j])
+                        {
+                            ganancia += 3*fichasApostadas[i];
+                            apuestaGanada = TRUE;
+                            break;
+
+                        }
+                    }
+                    if(apuestaGanada==FALSE)
+                    {
+                        perdida += fichasApostadas[i];
+                    }
+                    break;
+
+                case 3: //Columna del 3
+
+                    for(j=0; j<NROSPORCOLUMNA; j++)
+                    {
+                        if(giro==columna3[j])
+                        {
+                            ganancia += 3*fichasApostadas[i];
+                            apuestaGanada = TRUE;
+                            break;
+
+                        }
+                    }
+                    if(apuestaGanada==FALSE)
+                    {
+                        perdida += fichasApostadas[i];
+                    }
+                    break;
+                } //Fin switch Columnas
+
+            default:
+                break;
+
+            } //Fin switch principal
+
+
+        } //Fin for principal
+
+        printf("\nGanancias: %d\n", ganancia);
+        printf("Perdidas: %d\n", perdida);
+    }
+    return 0;
+}
+
+int registrarMontoFichas(int *dineroTotalJugador)
+{
     // Pasar como parametro dineroTotalJugador
     int fichasTemp = 0;
     int fichasApostadas = 0;
@@ -347,7 +347,8 @@ int registrarMontoFichas(int *dineroTotalJugador){
         {
 
             break;
-        }else
+        }
+        else
         {
 
             if(fichasTemp>(*dineroTotalJugador))
@@ -359,7 +360,8 @@ int registrarMontoFichas(int *dineroTotalJugador){
                 fichasTemp = 0;
 
 
-            }else
+            }
+            else
             {
                 *dineroTotalJugador -= fichasTemp;
                 fichasApostadas += fichasTemp;
@@ -373,7 +375,8 @@ int registrarMontoFichas(int *dineroTotalJugador){
 }
 
 
-Apuesta registrarApuestaPlenos(int *dineroTotalJugador){
+Apuesta registrarApuestaPlenos(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese el número al cual desea apostar (0 al 36): ");
     scanf("%d", &valor);
@@ -389,10 +392,11 @@ Apuesta registrarApuestaPlenos(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaDocenas(int *dineroTotalJugador){
+Apuesta registrarApuestaDocenas(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese a qué docena desea apostar:\n%d.Primera docena\n%d.Segunda docena\n%d.Tercera docena\n",
-            A_PRIMER_DOCENA, A_SEGUNDA_DOCENA, A_TERCERA_DOCENA);
+           A_PRIMER_DOCENA, A_SEGUNDA_DOCENA, A_TERCERA_DOCENA);
     scanf("%d", &valor);
     while(valor<=0 || valor>3)
     {
@@ -406,7 +410,8 @@ Apuesta registrarApuestaDocenas(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaFalta(int *dineroTotalJugador){
+Apuesta registrarApuestaFalta(int *dineroTotalJugador)
+{
 
     Apuesta a;
     a.tipo = A_FALTA;
@@ -415,7 +420,8 @@ Apuesta registrarApuestaFalta(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaPasa(int *dineroTotalJugador){
+Apuesta registrarApuestaPasa(int *dineroTotalJugador)
+{
 
     Apuesta a;
     a.tipo = A_PASA;
@@ -425,7 +431,8 @@ Apuesta registrarApuestaPasa(int *dineroTotalJugador){
 }
 
 
-Apuesta registrarApuestaColor(int *dineroTotalJugador){
+Apuesta registrarApuestaColor(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese el color al desea apostar:\n1.Rojo\n2.Negro\n");
     scanf("%d", &valor);
@@ -442,7 +449,8 @@ Apuesta registrarApuestaColor(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaParidad(int *dineroTotalJugador){
+Apuesta registrarApuestaParidad(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese si desea apostar a los números pares o impares:\n1.Par\n2.Impar\n");
     scanf("%d", &valor);
@@ -459,7 +467,8 @@ Apuesta registrarApuestaParidad(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaColumna(int *dineroTotalJugador){
+Apuesta registrarApuestaColumna(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese el tipo de columna a la que desea apostar:\n1.Columna del 1\n2.Columna del 2\n3.Columna del 3\n");
     scanf("%d", &valor);
@@ -479,7 +488,8 @@ Apuesta registrarApuestaColumna(int *dineroTotalJugador){
 
 
 
-void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTotalJugador){
+void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTotalJugador)
+{
     int i;
 
     for(i=0; i<nApuestas; i++) // Comienzo for apuestas
@@ -497,43 +507,45 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
 
         switch(tipoApuestas) //Inicio Swith Tipo Apuestas
         {
-            case A_PLENO: //Plenos
-                apuestas[i] = registrarApuestaPlenos(dineroTotalJugador);
-                break;
+        case A_PLENO: //Plenos
+            apuestas[i] = registrarApuestaPlenos(dineroTotalJugador);
+            break;
 
-            case A_DOCENAS: //Docenas
-                apuestas[i] = registrarApuestaDocenas(dineroTotalJugador);
-                break;
+        case A_DOCENAS: //Docenas
+            apuestas[i] = registrarApuestaDocenas(dineroTotalJugador);
+            break;
 
-            case A_FALTA:  // Falta
-                apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
-                break;
+        case A_FALTA:  // Falta
+            apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
+            break;
 
-            case A_PASA:  // Pasa
-                apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
-                break;
+        case A_PASA:  // Pasa
+            apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
+            break;
 
-            case A_COLOR: // Color
-                apuestas[i] = registrarApuestaColor(dineroTotalJugador);
-                break;
+        case A_COLOR: // Color
+            apuestas[i] = registrarApuestaColor(dineroTotalJugador);
+            break;
 
-            case A_PARIDAD: // Par o Impar
-                apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
+        case A_PARIDAD: // Par o Impar
+            apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
 
-                break;
+            break;
 
-            case A_COLUMNA: // Columnas =
-                apuestas[i] = registrarApuestaColumna(dineroTotalJugador);
+        case A_COLUMNA: // Columnas =
+            apuestas[i] = registrarApuestaColumna(dineroTotalJugador);
 
-                break;
+            break;
 
-            default: break;
+        default:
+            break;
 
         } // Fin Switch Tipo Apuestas
     } //Fin for Apuestas
 }
 
-int main(){
+int main()
+{
     // Esta funcion es un test para preguntarApuestasAlUsuario()
     int dineroTotalJugador = 1000;
     int nApuestas;
@@ -542,7 +554,8 @@ int main(){
     scanf("%d", &nApuestas);
     Apuesta apuestas[nApuestas];
     preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
-    for (i=0;i<nApuestas;i++){
+    for (i=0; i<nApuestas; i++)
+    {
         imprimirApuesta(apuestas[i]);
     }
     return 0;
