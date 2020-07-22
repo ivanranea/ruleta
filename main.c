@@ -33,6 +33,12 @@
 #define A_SEGUNDA_COLUMNA 2
 #define A_TERCERA_COLUMNA 3
 
+const int numerosRojos[] = {1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36};
+const int numerosNegros[] = {2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35};
+const int columna1[] = {1,4,7,10,13,16,19,22,25,28,31,34};
+const int columna2[] = {2,5,8,11,14,17,20,23,26,29,32,35};
+const int columna3[] = {3,6,9,12,15,18,21,24,27,30,33,36};
+
 
 
 typedef struct {
@@ -42,41 +48,68 @@ typedef struct {
 } Apuesta;
 // Para apostar 5 fichas al rojo Apuesta(tipo: 5, valor: 1, fichas: 5)
 
+typedef struct {
+    int ganancia;
+    int perdida;
+
+} ganancia_perdida;
+
 void imprimirApuesta(Apuesta a){
     printf("Apuesta | tipo: %d | valor: %d | fichas: %d |\n", a.tipo, a.valor, a.fichas);
 }
 
+void imprimirGanancia(ganancia_perdida g){
+    printf("Ganancia: %d | Perdida: %d\n", g.ganancia, g.perdida);
+}
 
-int main2()
-{
-    int giro = 20;
+int testResolucionApuestas(){ //funcion para testear resolucion de apuestas
+    int i;
+    int nApuestas = 3;
+    Apuesta apuestas[nApuestas];
+    Apuesta a;
+    int giro = 1;
+    for(i=0; i<3; i++)
+    {
+        a = apuestas.tipo = 1+i;
+        a = apuestas.valor = 1+i;
+        a = apuestas.fichas = 1+i;
+        apuestas[i] = a;
+    }
+
+    ganancia_perdida registroGananciaPerdida[nApuestas];
+
+    resolucionApuestas(apuestas, registroGananciaPerdida, nApuestas, giro);
+
+    for(i=0; i<nApuestas; i++)
+    {
+        imprimirGanancia(registroGananciaPerdida[i]);
+    }
+
+}
+
+int registrarGananciaPleno(Apuesta apuestas, int giro){
     int ganancia = 0;
     int perdida = 0;
-    int nApuestas = 8;
-    int tipoApuestas[nApuestas]; //Array en el que se va a guardar el código del tipo de apuesta
-    int fichasApostadas[nApuestas]; //Array en el que se va a guardar la cantidad de fichas apostadas en un tipo de apuesta
-    int tipoDocena [3];
-    int tipoColor [2];
-    int parOimpar [2];
-    int tipoColumna [3];
-    int apuestaGanada = FALSE;
-    int plenos[nApuestas];
+    if(giro==apuestas.valor)
+                {
+                    ganancia += 35*apuestas.fichas;
 
-    int fichasTemp = 0;
-    int i, j;
-    i = 0;
-    j = 0;
+                }else
+                {
+                    perdida += apuestas.fichas;
+                }
+    ganancia_perdida g;
+
+    g.ganancia = ganancia;
+    g.perdida = perdida;
+
+    return g;
+}
 
     /// INICIO FUNCION RESOLUCION DE PREMIOS
-    void resolucionApuestas(Apuesta *apuestas, int nApuestas){
+void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPerdida, int nApuestas, int giro){
 
     int i;
-    const int numerosRojos[]={1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36};
-    const int numerosNegros[]={2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35};
-    const int columna1[]={1,4,7,10,13,16,19,22,25,28,31,34};
-    const int columna2[]={2,5,8,11,14,17,20,23,26,29,32,35};
-    const int columna3[]={3,6,9,12,15,18,21,24,27,30,33,36};
-
     for(i=0; i<nApuestas; i++) // Inicio for principal
     {
         Apuesta a = apuestas[i];
@@ -84,14 +117,7 @@ int main2()
         {
             case A_PLENO: //Numeros Plenos
 
-                if(giro==a.valor)
-                {
-                    ganancia += 35*a.fichas;
-
-                }else
-                {
-                    perdida += a.fichas;
-                }
+                registroGananciaPerdida[i] = registrarGananciaPleno(a);
                 break;
 
             case 2: //Docenas
@@ -164,10 +190,10 @@ int main2()
                 {
                     case A_COLOR_ROJO: //Rojo
 
-                        apuestaGanada = FALSE;
-                        for(j=0; j<CANTROJOS; j++)
+                        int apuestaGanada = FALSE;
+                        for(i=0; i<CANTROJOS; i++)
                         {
-                            if(giro==numerosRojos[j])
+                            if(giro==numerosRojos[i])
                             {
                                 ganancia += 2*a.fichas;
                                 apuestaGanada = TRUE;
@@ -183,10 +209,10 @@ int main2()
 
                     case A_COLOR_NEGRO: //Negro
 
-                        apuestaGanada = FALSE;
-                        for(j=0; j<CANTNEGROS; j++)
+                        int apuestaGanada = FALSE;
+                        for(i=0; i<CANTNEGROS; i++)
                         {
-                            if(giro==numerosNegros[j])
+                            if(giro==numerosNegros[i])
                             {
                                 ganancia += 2*a.fichas;
                                 apuestaGanada = TRUE;
@@ -297,13 +323,24 @@ int main2()
 
     } //Fin for principal
 
-    printf("\nGanancias: %d\n", ganancia);
-    printf("Perdidas: %d\n", perdida);
-}
-    return 0;
-}
 
-int registrarMontoFichas(int *dineroTotalJugador){
+    /*if(registroGananciaPerdida.ganancia==0) // Deberiamos mostrar las ganancias totales o ir mostrando los resultados de cada apuesta.
+    {
+        printf("La ganancia de la mesa fue: %d.\nEl jugador no tuvo ganancias.", registroGananciaPerdida.perdida);
+
+    }else if(registroGananciaPerdida.perdida==0)
+    {
+        printf("La mesa no tuvo ganancias.\nLa ganancia del jugador fue: %d.", registroGananciaPerdida.ganancia);
+    }else
+    {
+        print("La ganancia de la mesa fue: %d.\nLa ganancia del jugador fue: %d.", registroGananciaPerdida.perdida, registroGananciaPerdida.ganancia);
+    }*/
+
+
+} // Fin funcion resolucion de premios
+
+
+/*int registrarMontoFichas(int *dineroTotalJugador){
     // Pasar como parametro dineroTotalJugador
     int fichasTemp = 0;
     int fichasApostadas = 0;
@@ -361,10 +398,10 @@ int registrarMontoFichas(int *dineroTotalJugador){
         }
     }
     return fichasApostadas; //retornar entero que representa fichas
-}
+}*/
 
 
-Apuesta registrarApuestaPlenos(int *dineroTotalJugador){
+/*Apuesta registrarApuestaPlenos(int *dineroTotalJugador){
     int valor;
     printf("Ingrese el número al cual desea apostar (0 al 36): ");
     scanf("%d", &valor);
@@ -522,9 +559,9 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
 
         } // Fin Switch Tipo Apuestas
     } //Fin for Apuestas
-}
+}*/
 
-int main(){
+/*int main(){
     // Esta funcion es un test para preguntarApuestasAlUsuario()
     int dineroTotalJugador = 1000;
     int nApuestas;
@@ -537,10 +574,12 @@ int main(){
         imprimirApuesta(apuestas[i]);
     }
     return 0;
+}*/
+
+int main(){
+    int nApuestas = 5;
+    ganancia_perdida registroGananciaPerdida[nApuestas];
+    int giro = 20;
+    testResolucionApuestas();
 }
 
-//int main(){
-//    // Esta funcion es un test para registrarMontoFichas
-//    int resultado = registrarMontoFichas(dineroTotalJugador);
-//    printf("La cantidad de fichas apostadas es: %d\n", resultado);
-//}
