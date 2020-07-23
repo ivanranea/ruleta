@@ -62,30 +62,7 @@ void imprimirGanancia(ganancia_perdida g){
     printf("Ganancia: %d | Perdida: %d\n", g.ganancia, g.perdida);
 }
 
-int testResolucionApuestas(){ //funcion para testear resolucion de apuestas
-    int i;
-    int nApuestas = 3;
-    Apuesta apuestas[nApuestas];
-    Apuesta a;
-    int giro = 1;
-    for(i=0; i<3; i++)
-    {
-        a = apuestas.tipo = 1+i;
-        a = apuestas.valor = 1+i;
-        a = apuestas.fichas = 1+i;
-        apuestas[i] = a;
-    }
 
-    ganancia_perdida registroGananciaPerdida[nApuestas];
-
-    resolucionApuestas(apuestas, registroGananciaPerdida, nApuestas, giro);
-
-    for(i=0; i<nApuestas; i++)
-    {
-        imprimirGanancia(registroGananciaPerdida[i]);
-    }
-
-}
 
 int registrarGananciaPleno(Apuesta apuestas, int giro){
     int ganancia = 0;
@@ -340,7 +317,7 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
 } // Fin funcion resolucion de premios
 
 
-/*int registrarMontoFichas(int *dineroTotalJugador){
+int registrarMontoFichas(int *dineroTotalJugador){
     // Pasar como parametro dineroTotalJugador
     int fichasTemp = 0;
     int fichasApostadas = 0;
@@ -398,10 +375,10 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
         }
     }
     return fichasApostadas; //retornar entero que representa fichas
-}*/
+}
 
 
-/*Apuesta registrarApuestaPlenos(int *dineroTotalJugador){
+Apuesta registrarApuestaPlenos(int *dineroTotalJugador){
     int valor;
     printf("Ingrese el número al cual desea apostar (0 al 36): ");
     scanf("%d", &valor);
@@ -559,9 +536,9 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
 
         } // Fin Switch Tipo Apuestas
     } //Fin for Apuestas
-}*/
+}
 
-/*int main(){
+int main2(){
     // Esta funcion es un test para preguntarApuestasAlUsuario()
     int dineroTotalJugador = 1000;
     int nApuestas;
@@ -574,12 +551,30 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
         imprimirApuesta(apuestas[i]);
     }
     return 0;
-}*/
+}
 
-int main(){
-    int nApuestas = 5;
+int main(){ //funcion para testear resolucion de apuestas
+    int i;
+    int nApuestas = 3;
+    Apuesta apuestas[nApuestas];
+    Apuesta a;
+    int giro = 1;
+    for(i=0; i<3; i++)
+    {
+        a = apuestas.tipo = 1+i;
+        a = apuestas.valor = 1+i;
+        a = apuestas.fichas = 1+i;
+        apuestas[i] = a;
+    }
+
     ganancia_perdida registroGananciaPerdida[nApuestas];
-    int giro = 20;
-    testResolucionApuestas();
+
+    resolucionApuestas(apuestas, registroGananciaPerdida, nApuestas, giro);
+
+    for(i=0; i<nApuestas; i++)
+    {
+        imprimirGanancia(registroGananciaPerdida[i]);
+    }
+    return 0;
 }
 
