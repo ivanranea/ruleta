@@ -64,19 +64,161 @@ void imprimirGanancia(ganancia_perdida g){
 
 
 
-int registrarGananciaPleno(Apuesta apuestas, int giro){
+ganancia_perdida registrarGananciaPleno(Apuesta apuestas, int giro){
     int ganancia = 0;
     int perdida = 0;
     if(giro==apuestas.valor)
-                {
-                    ganancia += 35*apuestas.fichas;
+    {
+        ganancia += 35*apuestas.fichas;
 
-                }else
-                {
-                    perdida += apuestas.fichas;
-                }
+    }else
+    {
+        perdida += apuestas.fichas;
+    }
+
     ganancia_perdida g;
+    g.ganancia = ganancia;
+    g.perdida = perdida;
 
+    return g;
+}
+
+ganancia_perdida registrarGananciaPasa(Apuesta apuestas, int giro){
+    int ganancia = 0;
+    int perdida = 0;
+
+    if(giro>0 && giro<=18)
+    {
+        ganancia += 2*apuestas.fichas;
+
+    }else
+    {
+        perdida += apuestas.fichas;
+    }
+
+    ganancia_perdida g;
+    g.ganancia = ganancia;
+    g.perdida = perdida;
+
+    return g;
+}
+
+ganancia_perdida registrarGananciaColor(Apuesta apuestas, int giro){
+    int ganancia = 0;
+    int perdida = 0;
+    int i;
+
+    switch(apuestas.valor)
+    {
+        case A_COLOR_ROJO: //Rojo
+
+            int apuestaGanada = FALSE;
+            for(i=0; i<CANTROJOS; i++)
+            {
+                if(giro==numerosRojos[i])
+                {
+                    ganancia += 2*apuestas.fichas;
+                    apuestaGanada = TRUE;
+                    break;
+                }
+            }
+            if(apuestaGanada==FALSE)
+            {
+                perdida += apuestas.fichas;
+            }
+            break;
+
+        case A_COLOR_NEGRO: //Negro
+
+            int apuestaGanada = FALSE;
+            for(i=0; i<CANTNEGROS; i++)
+            {
+                if(giro==numerosNegros[i])
+                {
+                    ganancia += 2*apuestas.fichas;
+                    apuestaGanada = TRUE;
+                    break;
+                }
+            }
+            if(apuestaGanada==FALSE)
+            {
+                perdida += apuestas.fichas;
+            }
+            break;
+        default: break;
+    }
+
+    ganancia_perdida g;
+    g.ganancia = ganancia;
+    g.perdida = perdida;
+
+    return g;
+}
+
+ganancia_perdida registroGananciaColumna(Apuesta apuestas, int giro){
+
+    apuestaGanada = FALSE;
+    int i;
+    int ganancia = 0;
+    int perdida = 0;
+
+    switch(apuestas.valor)
+    {
+        case A_PRIMER_COLUMNA: //Columna del 1
+
+            for(i=0; i<NROSPORCOLUMNA; i++)
+            {
+                if(giro==columna1[i])
+                {
+                    ganancia += 3*apuestas.fichas;
+                    apuestaGanada = TRUE;
+                    break;
+                }
+            }
+            if(apuestaGanada==FALSE)
+            {
+                perdida += apuestas.fichas;
+            }
+            break;
+
+        case A_SEGUNDA_COLUMNA: //Columna del 2
+
+            for(i=0; j<NROSPORCOLUMNA; i++)
+            {
+                if(giro==columna2[i])
+                {
+                    ganancia += 3*apuestas.fichas;
+                    apuestaGanada = TRUE;
+                    break;
+
+                }
+            }
+            if(apuestaGanada==FALSE)
+            {
+                perdida += apuestas.fichas;
+            }
+            break;
+
+        case A_TERCERA_COLUMNA: //Columna del 3
+
+            for(i=0; j<NROSPORCOLUMNA; i++)
+            {
+                if(giro==columna3[i])
+                {
+                    ganancia += 3*apuestas.fichas;
+                    apuestaGanada = TRUE;
+                    break;
+                }
+            }
+            if(apuestaGanada==FALSE)
+            {
+                perdida += apuestas.fichas;
+            }
+            break;
+        default: break;
+    } //Fin switch Columnas
+
+    ganancia_perdida g;
     g.ganancia = ganancia;
     g.perdida = perdida;
 
@@ -94,7 +236,7 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
         {
             case A_PLENO: //Numeros Plenos
 
-                registroGananciaPerdida[i] = registrarGananciaPleno(a);
+                registroGananciaPerdida[i] = registrarGananciaPleno(a, giro);
                 break;
 
             case 2: //Docenas
@@ -139,14 +281,7 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
 
             case A_FALTA: //Falta (1 al 18)
 
-                if(giro>0 && giro<=18)
-                {
-                   ganancia += 2*a.fichas;
-
-                }else
-                {
-                    perdida += a.fichas;
-                }
+                registroGananciaPerdida[i] = registrarGananciaPasa(a, giro);
                 break;
 
             case 4: //Pasa (19 al 36)
@@ -163,46 +298,8 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
 
             case A_COLOR: //Color
 
-                switch(a.valor)
-                {
-                    case A_COLOR_ROJO: //Rojo
-
-                        int apuestaGanada = FALSE;
-                        for(i=0; i<CANTROJOS; i++)
-                        {
-                            if(giro==numerosRojos[i])
-                            {
-                                ganancia += 2*a.fichas;
-                                apuestaGanada = TRUE;
-                                break;
-
-                            }
-                        }
-                        if(apuestaGanada==FALSE)
-                        {
-                            perdida += a.fichas;
-                        }
-                        break;
-
-                    case A_COLOR_NEGRO: //Negro
-
-                        int apuestaGanada = FALSE;
-                        for(i=0; i<CANTNEGROS; i++)
-                        {
-                            if(giro==numerosNegros[i])
-                            {
-                                ganancia += 2*a.fichas;
-                                apuestaGanada = TRUE;
-                                break;
-
-                            }
-                        }
-                        if(apuestaGanada==FALSE)
-                        {
-                            perdida += a.fichas;
-                        }
-                        break;
-                }
+                registroGananciaPerdida[i] = registrarGananciaColor(a, giro);
+                break;
 
             case 6: //Pares o Impares
 
@@ -235,63 +332,8 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
 
             case A_COLUMNA: // Columnas
 
-                apuestaGanada = FALSE;
-                switch(a.valor)
-                {
-                    case A_PRIMER_COLUMNA: //Columna del 1
-
-
-                        for(j=0; j<NROSPORCOLUMNA; j++)
-                        {
-                            if(giro==columna1[j])
-                            {
-                                ganancia += 3*a.fichas;
-                                apuestaGanada = TRUE;
-                                break;
-                            }
-                        }
-                        if(apuestaGanada==FALSE)
-                        {
-                            perdida += a.fichas;
-                        }
-                        break;
-
-                    case A_SEGUNDA_COLUMNA: //Columna del 2
-
-                        for(j=0; j<NROSPORCOLUMNA; j++)
-                        {
-                            if(giro==columna2[j])
-                            {
-                                ganancia += 3*a.fichas;
-                                apuestaGanada = TRUE;
-                                break;
-
-                            }
-                        }
-                        if(apuestaGanada==FALSE)
-                        {
-                            perdida += a.fichas;
-                        }
-                        break;
-
-                    case A_TERCERA_COLUMNA: //Columna del 3
-
-                        for(j=0; j<NROSPORCOLUMNA; j++)
-                        {
-                            if(giro==columna3[j])
-                            {
-                                ganancia += 3*a.fichas;
-                                apuestaGanada = TRUE;
-                                break;
-
-                            }
-                        }
-                        if(apuestaGanada==FALSE)
-                        {
-                            perdida += a.fichas;
-                        }
-                        break;
-                } //Fin switch Columnas
+                registroGananciaPerdida[i] = registroGananciaColumna(a, giro);
+                break;
 
             default: break;
 
