@@ -65,47 +65,35 @@ void imprimirGanancia(ganancia_perdida g){
 
 
 ganancia_perdida registrarGananciaPleno(Apuesta apuestas, int giro){
-    int ganancia = 0;
-    int perdida = 0;
+    ganancia_perdida g;
+
     if(giro==apuestas.valor)
     {
-        ganancia += 35*apuestas.fichas;
+        g.ganancia += 35*apuestas.fichas;
 
     }else
     {
-        perdida += apuestas.fichas;
+        g.perdida += apuestas.fichas;
     }
-
-    ganancia_perdida g;
-    g.ganancia = ganancia;
-    g.perdida = perdida;
-
     return g;
 }
 
 ganancia_perdida registrarGananciaPasa(Apuesta apuestas, int giro){
-    int ganancia = 0;
-    int perdida = 0;
+    ganancia_perdida g;
 
     if(giro>0 && giro<=18)
     {
-        ganancia += 2*apuestas.fichas;
+        g.ganancia += 2*apuestas.fichas;
 
     }else
     {
-        perdida += apuestas.fichas;
+        g.perdida += apuestas.fichas;
     }
-
-    ganancia_perdida g;
-    g.ganancia = ganancia;
-    g.perdida = perdida;
-
     return g;
 }
 
 ganancia_perdida registrarGananciaColor(Apuesta apuestas, int giro){
-    int ganancia = 0;
-    int perdida = 0;
+    ganancia_perdida g;
     int i;
 
     switch(apuestas.valor)
@@ -117,14 +105,14 @@ ganancia_perdida registrarGananciaColor(Apuesta apuestas, int giro){
             {
                 if(giro==numerosRojos[i])
                 {
-                    ganancia += 2*apuestas.fichas;
+                    g.ganancia += 2*apuestas.fichas;
                     apuestaGanada = TRUE;
                     break;
                 }
             }
             if(apuestaGanada==FALSE)
             {
-                perdida += apuestas.fichas;
+                g.perdida += apuestas.fichas;
             }
             break;
 
@@ -135,32 +123,26 @@ ganancia_perdida registrarGananciaColor(Apuesta apuestas, int giro){
             {
                 if(giro==numerosNegros[i])
                 {
-                    ganancia += 2*apuestas.fichas;
+                    g.ganancia += 2*apuestas.fichas;
                     apuestaGanada = TRUE;
                     break;
                 }
             }
             if(apuestaGanada==FALSE)
             {
-                perdida += apuestas.fichas;
+                g.perdida += apuestas.fichas;
             }
             break;
         default: break;
     }
-
-    ganancia_perdida g;
-    g.ganancia = ganancia;
-    g.perdida = perdida;
-
     return g;
 }
 
 ganancia_perdida registroGananciaColumna(Apuesta apuestas, int giro){
 
     apuestaGanada = FALSE;
+    ganancia_perdida g;
     int i;
-    int ganancia = 0;
-    int perdida = 0;
 
     switch(apuestas.valor)
     {
@@ -170,14 +152,14 @@ ganancia_perdida registroGananciaColumna(Apuesta apuestas, int giro){
             {
                 if(giro==columna1[i])
                 {
-                    ganancia += 3*apuestas.fichas;
+                    g.ganancia += 3*apuestas.fichas;
                     apuestaGanada = TRUE;
                     break;
                 }
             }
             if(apuestaGanada==FALSE)
             {
-                perdida += apuestas.fichas;
+                g.perdida += apuestas.fichas;
             }
             break;
 
@@ -187,7 +169,7 @@ ganancia_perdida registroGananciaColumna(Apuesta apuestas, int giro){
             {
                 if(giro==columna2[i])
                 {
-                    ganancia += 3*apuestas.fichas;
+                    g.ganancia += 3*apuestas.fichas;
                     apuestaGanada = TRUE;
                     break;
 
@@ -195,7 +177,7 @@ ganancia_perdida registroGananciaColumna(Apuesta apuestas, int giro){
             }
             if(apuestaGanada==FALSE)
             {
-                perdida += apuestas.fichas;
+                g.perdida += apuestas.fichas;
             }
             break;
 
@@ -205,23 +187,18 @@ ganancia_perdida registroGananciaColumna(Apuesta apuestas, int giro){
             {
                 if(giro==columna3[i])
                 {
-                    ganancia += 3*apuestas.fichas;
+                    g.ganancia += 3*apuestas.fichas;
                     apuestaGanada = TRUE;
                     break;
                 }
             }
             if(apuestaGanada==FALSE)
             {
-                perdida += apuestas.fichas;
+                g.perdida += apuestas.fichas;
             }
             break;
         default: break;
     } //Fin switch Columnas
-
-    ganancia_perdida g;
-    g.ganancia = ganancia;
-    g.perdida = perdida;
-
     return g;
 }
 
