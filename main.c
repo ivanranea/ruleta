@@ -64,39 +64,33 @@ void imprimirGanancia(ganancia_perdida g){
 
 
 
-int registrarGananciaPleno(Apuesta apuestas, int giro){
-    int ganancia = 0;
-    int perdida = 0;
-    if(giro==apuestas.valor)
-                {
-                    ganancia += 35*apuestas.fichas;
-
-                }else
-                {
-                    perdida += apuestas.fichas;
-                }
+ganancia_perdida registrarGananciaPleno(Apuesta apuestas, int giro){
     ganancia_perdida g;
 
-    g.ganancia = ganancia;
-    g.perdida = perdida;
+    if(giro==apuestas.valor)
+    {
+        g.ganancia += 35*apuestas.fichas;
 
+    }else
+    {
+        g.perdida += apuestas.fichas;
+    }
     return g;
 }
 
 ganancia_perdida registrarGananciaDocenas(Apuesta apuestas, int giro){
-    int ganacia = 0;
-    int perdida = 0;
+    ganancia_perdida g;
 
     switch(a.valor)
     {
         case A_PRIMER_DOCENA: //Primera docena
             if(giro>0 && giro<=12)
             {
-                ganancia += 3*apuestas.fichas;
+                g.ganancia += 3*apuestas.fichas;
 
             }else
             {
-                perdida += apuestas.fichas;
+                g.perdida += apuestas.fichas;
             }
             break;
 
@@ -104,73 +98,59 @@ ganancia_perdida registrarGananciaDocenas(Apuesta apuestas, int giro){
 
             if(giro>12 && giro<=24)
             {
-                ganancia += 3*apuestas.fichas[i];
+                g.ganancia += 3*apuestas.fichas;
 
             }else
             {
-                perdida += apuestas.fichas[i];
+                g.perdida += apuestas.fichas;
             }
             break;
 
         case A_TERCERA_DOCENA: //Tercera docena
 
-            if(giro>24)
+            if(giro>24 && giro <= 36)
             {
-                ganancia += 3*apuestas.fichas[i];
+                g.ganancia += 3*apuestas.fichas;
             }else
             {
-                perdida += apuestas.fichas[i];
+                g.perdida += apuestas.fichas;
             }
             break;
 
         default:break;
     }
-
-    ganancia_perdida g;
-
-    g.ganancia = ganancia;
-    g.perdida = perdida;
-
     return g;
 
 }
 
 ganancia_perdida registrarGananciaPasa()(Apuesta apuestas, int giro){
-    int ganancia = 0;
-    int perdida = 0;
+    ganancia_perdida g;
 
     if(giro>=19 && giro<=36)
     {
-        ganancia += 2*apuestas.fichas[i];
+        g.ganancia += 2*apuestas.fichas;
 
     }else
     {
-        perdida += apuestas.fichas[i];
+        g.perdida += apuestas.fichas;
     }
-
-    ganancia_perdida g;
-
-    g.ganancia = ganancia;
-    g.perdida = perdida;
-
     return g;
 
 }
 
 ganancia_perdida registrarGananciaParidad()(Apuesta apuestas, int giro){
-    int ganancia = 0;
-    int perdida = 0;
+    ganancia_perdida g;
 
     switch(a.valor)
     {
         case A_PARIDAD_PAR: //Par
             if(giro%2==0)
             {
-                ganancia += 2*apuestas.fichas[i];
+                g.ganancia += 2*apuestas.fichas;
 
             }else
             {
-                perdida += apuestas.fichas[i];
+                g.perdida += apuestas.fichas;
             }
 
             break;
@@ -178,23 +158,17 @@ ganancia_perdida registrarGananciaParidad()(Apuesta apuestas, int giro){
         case A_PARIDAD_IMPAR: //Impar
             if(giro%2!=0)
             {
-                ganancia += 2*apuestas.fichas;
+                g.ganancia += 2*apuestas.fichas;
 
             }else
-                {
-            perdida += apuestas.fichas;
-                }
+            {
+                g.perdida += apuestas.fichas;
+            }
 
             break;
 
         default:break;
     }
-
-    ganancia_perdida g;
-
-    g.ganancia = ganancia;
-    g.perdida = perdida;
-
     return g;
 
 }
@@ -231,7 +205,7 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
                 break;
 
             case A_PASA: //Pasa (19 al 36)
-                registroGananciaPerdida[i] = registrarGananciaPasa(a);
+                registroGananciaPerdida[i] = registrarGananciaPasa(a, giro);
                 break;
 
             case A_COLOR: //Color
@@ -363,13 +337,6 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
 
 
 } // Fin funcion resolucion de premios
-
-
-        printf("\nGanancias: %d\n", ganancia);
-        printf("Perdidas: %d\n", perdida);
-    }
-    return 0;
-}
 
 int registrarMontoFichas(int *dineroTotalJugador)
 {
