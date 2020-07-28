@@ -64,112 +64,214 @@ void imprimirGanancia(ganancia_perdida g){
 
 
 
-ganancia_perdida registrarGananciaPleno(Apuesta apuestas, int giro){
+ganancia_perdida registrarGananciaPleno(Apuesta apuesta, int giro){
     ganancia_perdida g;
+    g.ganancia=0;
+    g.perdida=0;
 
-    if(giro==apuestas.valor)
+    if(giro==apuesta.valor)
     {
-        g.ganancia += 35*apuestas.fichas;
-
+        g.ganancia = 35*apuesta.fichas;
     }else
     {
-        g.perdida += apuestas.fichas;
+        g.perdida = apuesta.fichas;
     }
     return g;
 }
 
-ganancia_perdida registrarGananciaPasa(Apuesta apuestas, int giro){
+ganancia_perdida registrarGananciaDocenas(Apuesta apuesta, int giro){
     ganancia_perdida g;
+    g.ganancia=0;
+    g.perdida=0;
+
+    switch(apuesta.valor)
+    {
+        case A_PRIMER_DOCENA: //Primera docena
+            if(giro>0 && giro<=12)
+            {
+                g.ganancia = 3*apuesta.fichas;
+
+            }else
+            {
+                g.perdida = apuesta.fichas;
+            }
+            break;
+
+        case A_SEGUNDA_DOCENA: //Segunda docena
+
+            if(giro>12 && giro<=24)
+            {
+                g.ganancia = 3*apuesta.fichas;
+
+            }else
+            {
+                g.perdida = apuesta.fichas;
+            }
+            break;
+
+        case A_TERCERA_DOCENA: //Tercera docena
+
+            if(giro>24 && giro <= 36)
+            {
+                g.ganancia = 3*apuesta.fichas;
+            }else
+            {
+                g.perdida = apuesta.fichas;
+            }
+        default:break;
+    }
+    return g;
+}
+
+ganancia_perdida registrarGananciaFalta(Apuesta apuesta, int giro){
+    ganancia_perdida g;
+    g.ganancia=0;
+    g.perdida=0;
 
     if(giro>0 && giro<=18)
     {
-        g.ganancia += 2*apuestas.fichas;
-
+        g.ganancia = 2*apuesta.fichas;
     }else
     {
-        g.perdida += apuestas.fichas;
+        g.perdida = apuesta.fichas;
     }
     return g;
 }
 
-ganancia_perdida registrarGananciaColor(Apuesta apuestas, int giro){
+ganancia_perdida registrarGananciaColor(Apuesta apuesta, int giro){
     ganancia_perdida g;
-    int i;
+    g.ganancia=0;
+    g.perdida=0;
 
-    switch(apuestas.valor)
+    int i;
+    int apuestaGanada = FALSE;
+
+    switch(apuesta.valor)
     {
         case A_COLOR_ROJO: //Rojo
 
-            int apuestaGanada = FALSE;
             for(i=0; i<CANTROJOS; i++)
             {
                 if(giro==numerosRojos[i])
                 {
-                    g.ganancia += 2*apuestas.fichas;
+                    g.ganancia = 2*apuesta.fichas;
                     apuestaGanada = TRUE;
                     break;
                 }
             }
             if(apuestaGanada==FALSE)
             {
-                g.perdida += apuestas.fichas;
+                g.perdida = apuesta.fichas;
             }
             break;
 
         case A_COLOR_NEGRO: //Negro
 
-            int apuestaGanada = FALSE;
             for(i=0; i<CANTNEGROS; i++)
             {
                 if(giro==numerosNegros[i])
                 {
-                    g.ganancia += 2*apuestas.fichas;
+                    g.ganancia = 2*apuesta.fichas;
                     apuestaGanada = TRUE;
                     break;
                 }
             }
             if(apuestaGanada==FALSE)
             {
-                g.perdida += apuestas.fichas;
+                g.perdida = apuesta.fichas;
             }
             break;
-        default: break;
+        default:break;
+    }
+    return g;
+
+}
+
+ganancia_perdida registrarGananciaPasa(Apuesta apuesta, int giro){
+    ganancia_perdida g;
+    g.ganancia=0;
+    g.perdida=0;
+
+    if(giro>=19 && giro<=36)
+    {
+        g.ganancia = 2*apuesta.fichas;
+
+    }else
+    {
+        g.perdida = apuesta.fichas;
+    }
+    return g;
+
+}
+
+ganancia_perdida registrarGananciaParidad(Apuesta apuesta, int giro){
+    ganancia_perdida g;
+    g.ganancia=0;
+    g.perdida=0;
+
+    switch(apuesta.valor)
+    {
+        case A_PARIDAD_PAR: //Par
+            if(giro%2==0)
+            {
+                g.ganancia = 2*apuesta.fichas;
+
+            }else
+            {
+                g.perdida = apuesta.fichas;
+            }
+
+            break;
+
+        case A_PARIDAD_IMPAR: //Impar
+            if(giro%2!=0)
+            {
+                g.ganancia = 2*apuesta.fichas;
+
+            }else
+            {
+                g.perdida = apuesta.fichas;
+            }
+
+            break;
+
+        default:break;
     }
     return g;
 }
 
-ganancia_perdida registroGananciaColumna(Apuesta apuestas, int giro){
-
-    apuestaGanada = FALSE;
-    ganancia_perdida g;
+ganancia_perdida registrarGananciaColumna(Apuesta apuesta, int giro){
+    int apuestaGanada = FALSE;
     int i;
+    ganancia_perdida g;
+    g.ganancia=0;
+    g.perdida=0;
 
-    switch(apuestas.valor)
+    switch(apuesta.valor)
     {
         case A_PRIMER_COLUMNA: //Columna del 1
-
             for(i=0; i<NROSPORCOLUMNA; i++)
             {
                 if(giro==columna1[i])
                 {
-                    g.ganancia += 3*apuestas.fichas;
+                    g.ganancia = 3*apuesta.fichas;
                     apuestaGanada = TRUE;
                     break;
                 }
             }
             if(apuestaGanada==FALSE)
             {
-                g.perdida += apuestas.fichas;
+                g.perdida = apuesta.fichas;
             }
             break;
 
         case A_SEGUNDA_COLUMNA: //Columna del 2
 
-            for(i=0; j<NROSPORCOLUMNA; i++)
+            for(i=0; i<NROSPORCOLUMNA; i++)
             {
                 if(giro==columna2[i])
                 {
-                    g.ganancia += 3*apuestas.fichas;
+                    g.ganancia += 3*apuesta.fichas;
                     apuestaGanada = TRUE;
                     break;
 
@@ -177,24 +279,24 @@ ganancia_perdida registroGananciaColumna(Apuesta apuestas, int giro){
             }
             if(apuestaGanada==FALSE)
             {
-                g.perdida += apuestas.fichas;
+                g.perdida = apuesta.fichas;
             }
             break;
 
         case A_TERCERA_COLUMNA: //Columna del 3
 
-            for(i=0; j<NROSPORCOLUMNA; i++)
+            for(i=0; i<NROSPORCOLUMNA; i++)
             {
                 if(giro==columna3[i])
                 {
-                    g.ganancia += 3*apuestas.fichas;
+                    g.ganancia = 3*apuesta.fichas;
                     apuestaGanada = TRUE;
                     break;
                 }
             }
             if(apuestaGanada==FALSE)
             {
-                g.perdida += apuestas.fichas;
+                g.perdida = apuesta.fichas;
             }
             break;
         default: break;
@@ -216,61 +318,18 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
                 registroGananciaPerdida[i] = registrarGananciaPleno(a, giro);
                 break;
 
-            case 2: //Docenas
-                switch(tipoDocena[i])
-                {
-                    case 1: //Primera docena
+            case A_DOCENAS: //Docenas
 
-                        if(giro>0 && giro<=12)
-                        {
-                            ganancia += 3*fichasApostadas[i];
-
-                        }else
-                        {
-                            perdida += fichasApostadas[i];
-                        }
-                        break;
-
-                    case 2: //Segunda docena
-
-                        if(giro>12 && giro<=24)
-                        {
-                           ganancia += 3*fichasApostadas[i];
-
-                        }else
-                        {
-                            perdida += fichasApostadas[i];
-                        }
-                        break;
-
-                    case 3: //Tercera docena
-
-                        if(giro>24)
-                        {
-                            ganancia += 3*fichasApostadas[i];
-
-                        }else
-                        {
-                            perdida += fichasApostadas[i];
-                        }
-                        break;
-                }
+                registroGananciaPerdida[i] = registrarGananciaDocenas(a, giro);
+                break;
 
             case A_FALTA: //Falta (1 al 18)
 
-                registroGananciaPerdida[i] = registrarGananciaPasa(a, giro);
+                registroGananciaPerdida[i] = registrarGananciaFalta(a, giro);
                 break;
 
-            case 4: //Pasa (19 al 36)
-
-                if(giro>=19 && giro<=36)
-                {
-                    ganancia += 2*fichasApostadas[i];
-
-                }else
-                {
-                    perdida += fichasApostadas[i];
-                }
+            case A_PASA: //Pasa (19 al 36)
+                registroGananciaPerdida[i] = registrarGananciaPasa(a, giro);
                 break;
 
             case A_COLOR: //Color
@@ -278,65 +337,54 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
                 registroGananciaPerdida[i] = registrarGananciaColor(a, giro);
                 break;
 
-            case 6: //Pares o Impares
-
-                switch(parOimpar[i])
-                {
-                    case 1: //Par
-
-                        if(giro%2==0)
-                        {
-                            ganancia += 2*fichasApostadas[i];
-
-                        }else
-                        {
-                            perdida += fichasApostadas[i];
-                        }
-                        break;
-
-                    case 2: //Impar
-
-                        if(giro%2!=0)
-                        {
-                            ganancia += 2*fichasApostadas[i];
-
-                        }else
-                        {
-                            perdida += fichasApostadas[i];
-                        }
-                        break;
-                }
+            case A_PARIDAD: //Pares o Impares
+                registroGananciaPerdida[i] = registrarGananciaParidad(a, giro);
+                break;
 
             case A_COLUMNA: // Columnas
 
-                registroGananciaPerdida[i] = registroGananciaColumna(a, giro);
+                registroGananciaPerdida[i] = registrarGananciaColumna(a, giro);
                 break;
 
             default: break;
 
         } //Fin switch principal
 
+        if(registroGananciaPerdida[i].ganancia>0){
+            printf("\nResultado apuesta numero %d:\nPerdida de mesa (Ganancia de jugador): $%d\n", i+1, registroGananciaPerdida[i].ganancia);
+        }else
+        {
+        printf("\nResultado apuesta numero %d:\nGanancia de mesa (Perdida de jugador): $%d\n", i+1, registroGananciaPerdida[i].perdida);
+        }
 
     } //Fin for principal
 
+    int ganancia = 0;
+    int perdida = 0;
 
-    /*if(registroGananciaPerdida.ganancia==0) // Deberiamos mostrar las ganancias totales o ir mostrando los resultados de cada apuesta.
-    {
-        printf("La ganancia de la mesa fue: %d.\nEl jugador no tuvo ganancias.", registroGananciaPerdida.perdida);
+    for(i=0; i<nApuestas; i++){
+        ganancia += registroGananciaPerdida[i].ganancia;
+        perdida += registroGananciaPerdida[i].perdida;
+    }
 
-    }else if(registroGananciaPerdida.perdida==0)
+
+    if(ganancia==0) // Deberiamos mostrar las ganancias totales o ir mostrando los resultados de cada apuesta.
     {
-        printf("La mesa no tuvo ganancias.\nLa ganancia del jugador fue: %d.", registroGananciaPerdida.ganancia);
+        printf("\nLa ganancia de la mesa fue: $%d.\nEl jugador no tuvo ganancias.\n\n", perdida);
+
+    }else if(perdida==0)
+    {
+        printf("\nLa mesa no tuvo ganancias.\nLa ganancia del jugador fue: $%d.\n\n", ganancia);
     }else
     {
-        print("La ganancia de la mesa fue: %d.\nLa ganancia del jugador fue: %d.", registroGananciaPerdida.perdida, registroGananciaPerdida.ganancia);
-    }*/
+        printf("\nLa ganancia de la mesa fue: $%d.\nLa ganancia del jugador fue: $%d.\n\n", perdida, ganancia);
+    }
 
 
 } // Fin funcion resolucion de premios
 
-
-int registrarMontoFichas(int *dineroTotalJugador){
+int registrarMontoFichas(int *dineroTotalJugador)
+{
     // Pasar como parametro dineroTotalJugador
     int fichasTemp = 0;
     int fichasApostadas = 0;
@@ -370,7 +418,8 @@ int registrarMontoFichas(int *dineroTotalJugador){
         {
 
             break;
-        }else
+        }
+        else
         {
 
             if(fichasTemp>(*dineroTotalJugador))
@@ -382,7 +431,8 @@ int registrarMontoFichas(int *dineroTotalJugador){
                 fichasTemp = 0;
 
 
-            }else
+            }
+            else
             {
                 *dineroTotalJugador -= fichasTemp;
                 fichasApostadas += fichasTemp;
@@ -397,7 +447,8 @@ int registrarMontoFichas(int *dineroTotalJugador){
 }
 
 
-Apuesta registrarApuestaPlenos(int *dineroTotalJugador){
+Apuesta registrarApuestaPlenos(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese el número al cual desea apostar (0 al 36): ");
     scanf("%d", &valor);
@@ -413,10 +464,11 @@ Apuesta registrarApuestaPlenos(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaDocenas(int *dineroTotalJugador){
+Apuesta registrarApuestaDocenas(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese a qué docena desea apostar:\n%d.Primera docena\n%d.Segunda docena\n%d.Tercera docena\n",
-            A_PRIMER_DOCENA, A_SEGUNDA_DOCENA, A_TERCERA_DOCENA);
+           A_PRIMER_DOCENA, A_SEGUNDA_DOCENA, A_TERCERA_DOCENA);
     scanf("%d", &valor);
     while(valor<=0 || valor>3)
     {
@@ -430,7 +482,8 @@ Apuesta registrarApuestaDocenas(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaFalta(int *dineroTotalJugador){
+Apuesta registrarApuestaFalta(int *dineroTotalJugador)
+{
 
     Apuesta a;
     a.tipo = A_FALTA;
@@ -439,7 +492,8 @@ Apuesta registrarApuestaFalta(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaPasa(int *dineroTotalJugador){
+Apuesta registrarApuestaPasa(int *dineroTotalJugador)
+{
 
     Apuesta a;
     a.tipo = A_PASA;
@@ -449,7 +503,8 @@ Apuesta registrarApuestaPasa(int *dineroTotalJugador){
 }
 
 
-Apuesta registrarApuestaColor(int *dineroTotalJugador){
+Apuesta registrarApuestaColor(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese el color al desea apostar:\n1.Rojo\n2.Negro\n");
     scanf("%d", &valor);
@@ -466,7 +521,8 @@ Apuesta registrarApuestaColor(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaParidad(int *dineroTotalJugador){
+Apuesta registrarApuestaParidad(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese si desea apostar a los números pares o impares:\n1.Par\n2.Impar\n");
     scanf("%d", &valor);
@@ -483,7 +539,8 @@ Apuesta registrarApuestaParidad(int *dineroTotalJugador){
     return a;
 }
 
-Apuesta registrarApuestaColumna(int *dineroTotalJugador){
+Apuesta registrarApuestaColumna(int *dineroTotalJugador)
+{
     int valor;
     printf("Ingrese el tipo de columna a la que desea apostar:\n1.Columna del 1\n2.Columna del 2\n3.Columna del 3\n");
     scanf("%d", &valor);
@@ -503,7 +560,8 @@ Apuesta registrarApuestaColumna(int *dineroTotalJugador){
 
 
 
-void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTotalJugador){
+void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTotalJugador)
+{
     int i;
 
     for(i=0; i<nApuestas; i++) // Comienzo for apuestas
@@ -521,37 +579,38 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
 
         switch(tipoApuestas) //Inicio Swith Tipo Apuestas
         {
-            case A_PLENO: //Plenos
-                apuestas[i] = registrarApuestaPlenos(dineroTotalJugador);
-                break;
+        case A_PLENO: //Plenos
+            apuestas[i] = registrarApuestaPlenos(dineroTotalJugador);
+            break;
 
-            case A_DOCENAS: //Docenas
-                apuestas[i] = registrarApuestaDocenas(dineroTotalJugador);
-                break;
+        case A_DOCENAS: //Docenas
+            apuestas[i] = registrarApuestaDocenas(dineroTotalJugador);
+            break;
 
-            case A_FALTA:  // Falta
-                apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
-                break;
+        case A_FALTA:  // Falta
+            apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
+            break;
 
-            case A_PASA:  // Pasa
-                apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
-                break;
+        case A_PASA:  // Pasa
+            apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
+            break;
 
-            case A_COLOR: // Color
-                apuestas[i] = registrarApuestaColor(dineroTotalJugador);
-                break;
+        case A_COLOR: // Color
+            apuestas[i] = registrarApuestaColor(dineroTotalJugador);
+            break;
 
-            case A_PARIDAD: // Par o Impar
-                apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
+        case A_PARIDAD: // Par o Impar
+            apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
 
-                break;
+            break;
 
-            case A_COLUMNA: // Columnas =
-                apuestas[i] = registrarApuestaColumna(dineroTotalJugador);
+        case A_COLUMNA: // Columnas =
+            apuestas[i] = registrarApuestaColumna(dineroTotalJugador);
 
-                break;
+            break;
 
-            default: break;
+        default:
+            break;
 
         } // Fin Switch Tipo Apuestas
     } //Fin for Apuestas
@@ -566,7 +625,8 @@ int main2(){
     scanf("%d", &nApuestas);
     Apuesta apuestas[nApuestas];
     preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
-    for (i=0;i<nApuestas;i++){
+    for (i=0; i<nApuestas; i++)
+    {
         imprimirApuesta(apuestas[i]);
     }
     return 0;
@@ -574,16 +634,19 @@ int main2(){
 
 int main(){ //funcion para testear resolucion de apuestas
     int i;
-    int nApuestas = 3;
+    int nApuestas = 7;
     Apuesta apuestas[nApuestas];
-    Apuesta a;
     int giro = 1;
-    for(i=0; i<3; i++)
+    for(i=0; i<nApuestas; i++)
     {
-        a = apuestas.tipo = 1+i;
-        a = apuestas.valor = 1+i;
-        a = apuestas.fichas = 1+i;
-        apuestas[i] = a;
+        apuestas[i].tipo = 1+i;
+        apuestas[i].valor = 1;
+        apuestas[i].fichas = 1+i;
+    }
+
+    for(i=0; i<nApuestas; i++){
+        imprimirApuesta(apuestas[i]);
+
     }
 
     ganancia_perdida registroGananciaPerdida[nApuestas];
