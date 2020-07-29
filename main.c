@@ -33,6 +33,11 @@
 #define A_SEGUNDA_COLUMNA 2
 #define A_TERCERA_COLUMNA 3
 
+#define FICHATEMP_FALTA fichaTemp.falta==fichaTemp.pasa || fichaTemp.falta==fichaTemp.color || fichaTemp.falta==fichaTemp.paridad
+#define FICHATEMP_PASA fichaTemp.pasa==fichaTemp.falta || fichaTemp.pasa==fichaTemp.color || fichaTemp.pasa==fichaTemp.paridad
+#define FICHATEMP_COLOR fichaTemp.color==fichaTemp.falta || fichaTemp.color==fichaTemp.pasa || fichaTemp.color==fichaTemp.paridad
+#define FICHATEMP_PARIDAD fichaTemp.paridad==fichaTemp.falta || fichaTemp.paridad==fichaTemp.pasa || fichaTemp.paridad==fichaTemp.color
+
 const int numerosRojos[] = {1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36};
 const int numerosNegros[] = {2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35};
 const int columna1[] = {1,4,7,10,13,16,19,22,25,28,31,34};
@@ -54,6 +59,14 @@ typedef struct {
 
 } ganancia_perdida;
 
+typedef struct{
+    int falta;
+    int pasa;
+    int color;
+    int paridad;
+
+} ficha_temp;
+
 void imprimirApuesta(Apuesta a){
     printf("Apuesta | tipo: %d | valor: %d | fichas: %d |\n", a.tipo, a.valor, a.fichas);
 }
@@ -62,6 +75,8 @@ void imprimirGanancia(ganancia_perdida g){
     printf("Ganancia: %d | Perdida: %d\n", g.ganancia, g.perdida);
 }
 
+
+void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *fichaTemp);
 
 
 ganancia_perdida registrarGananciaPleno(Apuesta apuesta, int giro){
@@ -450,11 +465,11 @@ int registrarMontoFichas(int *dineroTotalJugador)
 Apuesta registrarApuestaPlenos(int *dineroTotalJugador)
 {
     int valor;
-    printf("Ingrese el nÃºmero al cual desea apostar (0 al 36): ");
+    printf("Ingrese el número al cual desea apostar (0 al 36): ");
     scanf("%d", &valor);
     while(valor<0 || valor>36)
     {
-        printf("Ingreso incorrecto, elija un nÃºmero entre el 0 y el 36: ");
+        printf("Ingreso incorrecto, elija un número entre el 0 y el 36: ");
         scanf("%d", &valor);
     }
     Apuesta a;
@@ -467,12 +482,12 @@ Apuesta registrarApuestaPlenos(int *dineroTotalJugador)
 Apuesta registrarApuestaDocenas(int *dineroTotalJugador)
 {
     int valor;
-    printf("Ingrese a quÃ© docena desea apostar:\n%d.Primera docena\n%d.Segunda docena\n%d.Tercera docena\n",
+    printf("Ingrese a qué docena desea apostar:\n%d.Primera docena\n%d.Segunda docena\n%d.Tercera docena\n",
            A_PRIMER_DOCENA, A_SEGUNDA_DOCENA, A_TERCERA_DOCENA);
     scanf("%d", &valor);
     while(valor<=0 || valor>3)
     {
-        printf("Ingreso incorrecto, elija a quÃ© docena desea apostar (1, 2 o 3): ");
+        printf("Ingreso incorrecto, elija a qué docena desea apostar (1, 2 o 3): ");
         scanf("%d", &valor);
     }
     Apuesta a;
@@ -510,7 +525,7 @@ Apuesta registrarApuestaColor(int *dineroTotalJugador)
     scanf("%d", &valor);
     while(valor<=0 || valor>2)
     {
-        printf("Ingreso incorrecto, elija a quÃ© docena desea apostar (1 o 2): ");
+        printf("Ingreso incorrecto, elija a qué docena desea apostar (1 o 2): ");
         scanf("%d", &valor);
     }
 
@@ -524,11 +539,11 @@ Apuesta registrarApuestaColor(int *dineroTotalJugador)
 Apuesta registrarApuestaParidad(int *dineroTotalJugador)
 {
     int valor;
-    printf("Ingrese si desea apostar a los nÃºmeros pares o impares:\n1.Par\n2.Impar\n");
+    printf("Ingrese si desea apostar a los números pares o impares:\n1.Par\n2.Impar\n");
     scanf("%d", &valor);
     while(valor<=0 || valor>2)
     {
-        printf("Ingreso incorrecto, elija si desea apostar a los nÃºmeros pares o impares (1 o 2): ");
+        printf("Ingreso incorrecto, elija si desea apostar a los números pares o impares (1 o 2): ");
         scanf("%d", &valor);
     }
 
@@ -546,7 +561,7 @@ Apuesta registrarApuestaColumna(int *dineroTotalJugador)
     scanf("%d", &valor);
     while(valor<=0 || valor>3)
     {
-        printf("Ingreso incorrecto, elija a quÃ© columna desea apostar (1, 2 o 3): ");
+        printf("Ingreso incorrecto, elija a qué columna desea apostar (1, 2 o 3): ");
         scanf("%d", &valor);
     }
 
@@ -563,6 +578,12 @@ Apuesta registrarApuestaColumna(int *dineroTotalJugador)
 void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTotalJugador)
 {
     int i;
+    ficha_temp fichaTemp;
+    fichaTemp.falta = 0;
+    fichaTemp.pasa = 0;
+    fichaTemp.color = 0;
+    fichaTemp.paridad = 0;
+    //Llamar funcion mostrar paño
 
     for(i=0; i<nApuestas; i++) // Comienzo for apuestas
     {
@@ -589,18 +610,39 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
 
         case A_FALTA:  // Falta
             apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
+            fichaTemp.falta = apuestas[i].fichas;
+
+            if(FICHATEMP_FALTA)
+            {
+                restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+            }
             break;
 
         case A_PASA:  // Pasa
             apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
+            fichaTemp.pasa = apuestas[i].fichas;
+            if(FICHATEMP_PASA)
+            {
+                restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+            }
             break;
 
         case A_COLOR: // Color
             apuestas[i] = registrarApuestaColor(dineroTotalJugador);
+            fichaTemp.color = apuestas[i].fichas;
+             if(FICHATEMP_COLOR)
+            {
+                restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+            }
             break;
 
         case A_PARIDAD: // Par o Impar
             apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
+            fichaTemp.paridad = apuestas[i].fichas;
+             if(FICHATEMP_PARIDAD)
+            {
+                restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+            }
 
             break;
 
@@ -616,7 +658,45 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
     } //Fin for Apuestas
 }
 
-int main2(){
+void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *fichaTemp){ // Restricción para que el usuario no pueda apostar la misma cantidad de fichas en las apuestas de Falta, Pasa, Color y Par o Impar.
+
+    if(apuestas[i].tipo==A_FALTA)
+    {
+        while((fichaTemp->falta)!=(fichaTemp->pasa) && (fichaTemp->falta)!=(fichaTemp->color) && (fichaTemp->falta)!=(fichaTemp->paridad))
+        {
+            printf("Ya ingreso ese monto anteriormente en alguna de las otras apuestas que pagan doble, ingrese otro monto\n.");
+            apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
+            (fichaTemp->falta) = apuestas[i].fichas;
+        }
+    }else if(apuestas[i].tipo==A_PASA)
+    {
+        while(fichaTemp->pasa!=fichaTemp->falta && fichaTemp->pasa!=fichaTemp->color && fichaTemp->pasa!=fichaTemp->paridad)
+        {
+            printf("Ya ingreso ese monto anteriormente en alguna de las otras apuestas que pagan doble, ingrese otro monto\n.");
+            apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
+            fichaTemp->pasa = apuestas[i].fichas;
+        }
+    }else if(apuestas[i].tipo==A_COLOR)
+    {
+        while(fichaTemp->color!=fichaTemp->falta && fichaTemp->color!=fichaTemp->pasa && fichaTemp->color!=fichaTemp->paridad)
+        {
+            printf("Ya ingreso ese monto anteriormente en alguna de las otras apuestas que pagan doble, ingrese otro monto\n.");
+            apuestas[i] = registrarApuestaColor(dineroTotalJugador);
+            fichaTemp->color = apuestas[i].fichas;
+        }
+    }else if(apuestas[i].tipo==A_PARIDAD)
+    {
+        while(fichaTemp->paridad!=fichaTemp->falta && fichaTemp->paridad!=fichaTemp->color && fichaTemp->paridad!=fichaTemp->pasa)
+        {
+            printf("Ya ingreso ese monto anteriormente en alguna de las otras apuestas que pagan doble, ingrese otro monto\n.");
+            apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
+            fichaTemp->paridad = apuestas[i].fichas;
+        }
+    }
+
+}
+
+int main(){
     // Esta funcion es un test para preguntarApuestasAlUsuario()
     int dineroTotalJugador = 1000;
     int nApuestas;
@@ -632,7 +712,7 @@ int main2(){
     return 0;
 }
 
-int main(){ //funcion para testear resolucion de apuestas
+/*int main(){ //funcion para testear resolucion de apuestas
     int i;
     int nApuestas = 7;
     Apuesta apuestas[nApuestas];
@@ -641,7 +721,7 @@ int main(){ //funcion para testear resolucion de apuestas
     {
         apuestas[i].tipo = 1+i;
         apuestas[i].valor = 1;
-        apuestas[i].fichas = 1+i;
+        apuestas[i].fichas = 10;
     }
 
     for(i=0; i<nApuestas; i++){
@@ -658,5 +738,5 @@ int main(){ //funcion para testear resolucion de apuestas
         imprimirGanancia(registroGananciaPerdida[i]);
     }
     return 0;
-}
+}*/
 
