@@ -67,6 +67,12 @@ typedef struct{
 
 } ficha_temp;
 
+typedef struct{
+    int rojo;
+    int negro;
+
+}color;
+
 void imprimirApuesta(Apuesta a){
     printf("Apuesta | tipo: %d | valor: %d | fichas: %d |\n", a.tipo, a.valor, a.fichas);
 }
@@ -583,10 +589,16 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
     fichaTemp.pasa = 0;
     fichaTemp.color = 0;
     fichaTemp.paridad = 0;
+
     //Llamar funcion mostrar paño
 
     for(i=0; i<nApuestas; i++) // Comienzo for apuestas
     {
+        if(i==(nApuestas-2))
+        {
+            printf("Esta es su penúltima apuesta\n");
+        }
+
         int tipoApuestas;
         printf("\n1.Pleno\n2.Docenas\n3.Falta (1 al 18)\n4.Pasa (19 al 36)\n5.Color\n6.Pares o Impares\n7.Columnas\n");
         printf("\nApuesta nro %d: ", i+1);
@@ -634,6 +646,7 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
             {
                 restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
             }
+
             break;
 
         case A_PARIDAD: // Par o Impar
@@ -651,8 +664,7 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
 
             break;
 
-        default:
-            break;
+        default: break;
 
         } // Fin Switch Tipo Apuestas
     } //Fin for Apuestas
@@ -662,33 +674,41 @@ void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *
 
     if(apuestas[i].tipo==A_FALTA)
     {
-        while((fichaTemp->falta)!=(fichaTemp->pasa) && (fichaTemp->falta)!=(fichaTemp->color) && (fichaTemp->falta)!=(fichaTemp->paridad))
+        while((fichaTemp->falta)==(fichaTemp->pasa) || (fichaTemp->falta)==(fichaTemp->color) || (fichaTemp->falta)==(fichaTemp->paridad))
         {
-            printf("Ya ingreso ese monto anteriormente en alguna de las otras apuestas que pagan doble, ingrese otro monto\n.");
+            *dineroTotalJugador += fichaTemp->falta;
+            printf("\nYa ingreso ese monto anteriormente en alguna de las otras apuestas que pagan\ndoble, ingrese otro monto.\n");
+            printf("Tus apuestas anteriores fueron: Pasa: $%d, Color: $%d, Paridad: $%d\n", fichaTemp->pasa, fichaTemp->color, fichaTemp->paridad);
             apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
             (fichaTemp->falta) = apuestas[i].fichas;
         }
     }else if(apuestas[i].tipo==A_PASA)
     {
-        while(fichaTemp->pasa!=fichaTemp->falta && fichaTemp->pasa!=fichaTemp->color && fichaTemp->pasa!=fichaTemp->paridad)
+        while(fichaTemp->pasa==fichaTemp->falta || fichaTemp->pasa==fichaTemp->color || fichaTemp->pasa==fichaTemp->paridad)
         {
-            printf("Ya ingreso ese monto anteriormente en alguna de las otras apuestas que pagan doble, ingrese otro monto\n.");
+            *dineroTotalJugador += fichaTemp->pasa;
+            printf("\nYa ingreso ese monto anteriormente en alguna de las otras apuestas que pagan\ndoble, ingrese otro monto.\n");
+            printf("Tus apuestas anteriores fueron: Falta: $%d, Color: $%d, Paridad: $%d\n", fichaTemp->falta, fichaTemp->color, fichaTemp->paridad);
             apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
             fichaTemp->pasa = apuestas[i].fichas;
         }
     }else if(apuestas[i].tipo==A_COLOR)
     {
-        while(fichaTemp->color!=fichaTemp->falta && fichaTemp->color!=fichaTemp->pasa && fichaTemp->color!=fichaTemp->paridad)
+        while(fichaTemp->color==fichaTemp->falta || fichaTemp->color==fichaTemp->pasa || fichaTemp->color==fichaTemp->paridad)
         {
-            printf("Ya ingreso ese monto anteriormente en alguna de las otras apuestas que pagan doble, ingrese otro monto\n.");
+            *dineroTotalJugador += fichaTemp->color;
+            printf("\nYa ingreso ese monto anteriormente en alguna de las otras apuestas que pagan\ndoble, ingrese otro monto.\n");
+            printf("Tus apuestas anteriores fueron: Falta: $%d, Pasa: $%d, Paridad: $%d\n", fichaTemp->falta, fichaTemp->pasa, fichaTemp->paridad);
             apuestas[i] = registrarApuestaColor(dineroTotalJugador);
             fichaTemp->color = apuestas[i].fichas;
         }
     }else if(apuestas[i].tipo==A_PARIDAD)
     {
-        while(fichaTemp->paridad!=fichaTemp->falta && fichaTemp->paridad!=fichaTemp->color && fichaTemp->paridad!=fichaTemp->pasa)
+        while(fichaTemp->paridad==fichaTemp->falta || fichaTemp->paridad==fichaTemp->color || fichaTemp->paridad==fichaTemp->pasa)
         {
-            printf("Ya ingreso ese monto anteriormente en alguna de las otras apuestas que pagan doble, ingrese otro monto\n.");
+            *dineroTotalJugador += fichaTemp->paridad;
+            printf("\nYa ingreso ese monto anteriormente en alguna de las otras apuestas que pagan\ndoble, ingrese otro monto.\n");
+            printf("Tus apuestas anteriores fueron: Falta: $%d, Pasa: $%d, Color: $%d\n", fichaTemp->falta, fichaTemp->pasa, fichaTemp->color);
             apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
             fichaTemp->paridad = apuestas[i].fichas;
         }
@@ -696,7 +716,71 @@ void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *
 
 }
 
-int main(){
+void balanceFinal(ganancia_perdida *registroGananciaPerdida, int nApuestas){
+
+    int ganancia = 0;
+    int perdida = 0;
+
+    for(int i=0; i<nApuestas; i++)
+    {
+        ganancia += registroGananciaPerdida[i].ganancia; ///Se refiere a la ganancia del apostador
+        perdida += registroGananciaPerdida[i].perdida;  ///Se refiere a la perdida del apostador
+    }
+
+    printf("Ganancia total de mesa: $%d\nPerdida total de mesa: $%d\n", perdida, ganancia);
+
+    if(perdida>ganancia)
+    {
+        printf("\x1b[32m Mesa Ganadora!!!\x1b[0m\n");
+
+    }else if(perdida == ganancia)
+    {
+        printf("\x1b[33m Mesa No Conforme\x1b[0m\n");
+
+    }else
+    {
+        printf("\x1b[31m Mesa En Problemas ;)\x1b[0m\n");
+    }
+}
+
+void porcentajeColor(Apuesta *conjuntoApuestas, int *arraynApuestas, int nRondas)
+{
+    int i, j;
+    float porcentajerojo= 0;
+    float porcentajenegro = 0;
+    float rojo = 0;
+    float negro = 0;
+    float contApuesta = 0;
+
+    for(i=0; i<nRondas; i++)
+    {
+        for(j=0; j<arraynApuestas[i]; j++)
+        {
+           if(conjuntoApuestas[i][j].tipo==A_COLOR)
+            {
+                contApuesta ++;
+                if(conjuntoApuestas[i][j].valor==A_COLOR_ROJO)
+                {
+                     rojo += 1;
+
+                }else if(conjuntoApuestas[i][j].valor==A_COLOR_NEGRO)
+                {
+                    negro += 1;
+                }
+            }
+        }
+    }
+
+    porcentajerojo = rojo/contApuesta;
+    porcentajenegro = negro/contApuesta;
+
+    printf("El porcentaje de apuestas realizadas al color Rojo es %d%\nEl porcentaje de apuestas realizadas al color negro es %d%", porcentajerojo, porcentajenegro);
+
+}
+
+
+
+int main3(){
     // Esta funcion es un test para preguntarApuestasAlUsuario()
     int dineroTotalJugador = 1000;
     int nApuestas;
@@ -712,7 +796,7 @@ int main(){
     return 0;
 }
 
-/*int main(){ //funcion para testear resolucion de apuestas
+int main2(){ //funcion para testear resolucion de apuestas
     int i;
     int nApuestas = 7;
     Apuesta apuestas[nApuestas];
@@ -738,5 +822,46 @@ int main(){
         imprimirGanancia(registroGananciaPerdida[i]);
     }
     return 0;
-}*/
+}
 
+int main_final()
+{
+    int nRondas = 0;
+    int nApuestas = 0;
+    int arraynApuestas[APUESTAMAX]
+    int dineroTotalJugador = 1000;
+    Apuesta apuestas[APUESTAMAX];
+    int i;
+    int j;
+    Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX];
+    ganancia_perdida registroGananciaPerdida;
+    registroGananciaPerdida.ganancia = 0;
+    registroGananciaPerdida.perdida = 0;
+    int giro = 3;
+
+
+    printf("Ingrese cuántas rondas desea jugar: ");
+    scanf("%d", &nRondas);
+
+    for(i=0; i<nRondas; i++)
+    {
+        printf("Indique cuántas apuestas desea realizar: ")
+        scanf("%d", &nApuestas);
+        arraynApuestas[i]=nApuestas;
+
+        preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
+
+        for(j=0; j<nApuestas; j++)
+        {
+            conjuntoApuestas[i][j] = apuestas[j];
+
+        }
+        //funcion giroRuleta
+        resolucionApuestas(apuestas, &registroGananciaPerdida, nApuestas, giro);
+
+        }
+
+        porcentajeColor(conjuntoApuestas[i][j], arraynApuestas, nRondas);
+
+    return 0;
+}
