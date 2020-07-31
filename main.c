@@ -67,12 +67,6 @@ typedef struct{
 
 } ficha_temp;
 
-typedef struct{
-    int rojo;
-    int negro;
-
-}color;
-
 void imprimirApuesta(Apuesta a){
     printf("Apuesta | tipo: %d | valor: %d | fichas: %d |\n", a.tipo, a.valor, a.fichas);
 }
