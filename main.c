@@ -772,6 +772,89 @@ void porcentajeColor(Apuesta *conjuntoApuestas, int *arraynApuestas, int nRondas
 
 }
 
+void apuestaMayorValor(Apuesta *conjuntoApuestas, int *arraynApuestas, int nRondas){
+
+    int i, j, k;
+
+    int mayorDeApuestaPorRonda, mayorDeTodasLasRondas = 0;
+    int sumaTotales[7];
+    int mayoresApuestasPorRonda[nRondas];
+    int mayorApuestaFinal;
+    int mayorRondaFinal;
+
+    for(i=0; i<nRondas;i++)
+    {
+        for(j=0;j<arraynApuestas[i];j++)
+        {
+            if(conjuntoApuestas[i][j].tipo == A_PLENO)
+            {
+
+                suma_totales[0] += conjuntoApuestas[i][j].fichas
+
+            }else if(conjuntoApuestas[i][j].tipo == A_DOCENAS)
+            {
+
+                sumaTotales[1] += conjuntoApuestas[i][j].fichas
+
+            }else if(conjuntoApuestas[i][j].tipo == A_FALTA)
+            {
+
+                sumaTotales[2] += conjuntoApuestas[i][j].fichas
+
+            }else if(conjuntoApuestas[i][j].tipo == A_PASA)
+            {
+
+                sumaTotales[3] += conjuntoApuestas[i][j].fichas
+
+            }else if(conjuntoApuestas[i][j].tipo == A_COLOR)
+            {
+
+                sumaTotales[4] += conjuntoApuestas[i][j].fichas
+
+            }else if(conjuntoApuestas[i][j].tipo == A_PARIDAD)
+            {
+
+                sumaTotales[5] += conjuntoApuestas[i][j].fichas
+
+            }else
+            {
+
+                sumaTotales[6] += conjuntoApuestas[i][j].fichas
+            }
+
+
+        }
+
+        mayoresApuestasPorRonda[i] = sumaTotales[0];
+
+        for(k=1;k<7;k++)
+        {
+            if(sumaTotales[k]>mayoresApuestasPorRonda[i])
+            {
+               mayoresApuestasPorRonda[i] = sumaTotales[k];
+
+            }
+        }
+
+    }
+
+    mayorApuestaFinal = mayoresApuestasPorRonda[0];
+    mayorRondaFinal = 1;
+
+    for(h=1;h<7;h++)
+    {
+        if(mayoresApuestasPorRonda[h]>mayorApuestaFinal)
+        {
+           mayorApuestaFinal = mayoresApuestasPorRonda[h];
+           mayorRondaFinal = h + 1;
+
+        }
+    }
+    printf("La mayor apuesta es %d, en la ronda %d\n", mayorApuestaFinal, mayorRondaFinal);
+
+}
+
+
 
 
 int main3(){
@@ -856,6 +939,8 @@ int main_final()
         }
 
         porcentajeColor(conjuntoApuestas[i][j], arraynApuestas, nRondas);
+
+        apuestaMayorValor(conjuntoApuestas[i][j], arraynApuestas, nRondas);
 
     return 0;
 }
