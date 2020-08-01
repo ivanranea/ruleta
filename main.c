@@ -737,14 +737,14 @@ void balanceFinal(ganancia_perdida *registroGananciaPerdida, int nApuestas){
     }
 }
 
-void porcentajeColor(Apuesta *conjuntoApuestas, int *arraynApuestas, int nRondas)
+void porcentajeColor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas)
 {
     int i, j;
-    float porcentajerojo= 0;
-    float porcentajenegro = 0;
-    float rojo = 0;
-    float negro = 0;
-    float contApuesta = 0;
+    float porcentajerojo= 0.0;
+    float porcentajenegro = 0.0;
+    float rojo = 0.0;
+    float negro = 0.0;
+    float contApuesta = 0.0;
 
     for(i=0; i<nRondas; i++)
     {
@@ -768,9 +768,92 @@ void porcentajeColor(Apuesta *conjuntoApuestas, int *arraynApuestas, int nRondas
     porcentajerojo = rojo/contApuesta;
     porcentajenegro = negro/contApuesta;
 
-    printf("El porcentaje de apuestas realizadas al color Rojo es %d%\nEl porcentaje de apuestas realizadas al color negro es %d%", porcentajerojo, porcentajenegro);
+    printf("El porcentaje de apuestas realizadas al color Rojo es %.2f.\nEl porcentaje de apuestas realizadas al color negro es %.2f.\n", porcentajerojo, porcentajenegro);
 
 }
+
+void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas){
+
+    int h, i, j, k;
+
+    int mayorDeApuestaPorRonda, mayorDeTodasLasRondas = 0;
+    int sumaTotales[7];
+    int mayoresApuestasPorRonda[nRondas];
+    int mayorApuestaFinal;
+    int mayorRondaFinal;
+
+    for(i=0; i<nRondas;i++)
+    {
+        for(j=0;j<arraynApuestas[i];j++)
+        {
+            if(conjuntoApuestas[i][j].tipo == A_PLENO)
+            {
+
+                sumaTotales[0] += conjuntoApuestas[i][j].fichas;
+
+            }else if(conjuntoApuestas[i][j].tipo == A_DOCENAS)
+            {
+
+                sumaTotales[1] += conjuntoApuestas[i][j].fichas;
+
+            }else if(conjuntoApuestas[i][j].tipo == A_FALTA)
+            {
+
+                sumaTotales[2] += conjuntoApuestas[i][j].fichas;
+
+            }else if(conjuntoApuestas[i][j].tipo == A_PASA)
+            {
+
+                sumaTotales[3] += conjuntoApuestas[i][j].fichas;
+
+            }else if(conjuntoApuestas[i][j].tipo == A_COLOR)
+            {
+
+                sumaTotales[4] += conjuntoApuestas[i][j].fichas;
+
+            }else if(conjuntoApuestas[i][j].tipo == A_PARIDAD)
+            {
+
+                sumaTotales[5] += conjuntoApuestas[i][j].fichas;
+
+            }else
+            {
+
+                sumaTotales[6] += conjuntoApuestas[i][j].fichas;
+            }
+
+
+        }
+
+        mayoresApuestasPorRonda[i] = sumaTotales[0];
+
+        for(k=1;k<7;k++)
+        {
+            if(sumaTotales[k]>mayoresApuestasPorRonda[i])
+            {
+               mayoresApuestasPorRonda[i] = sumaTotales[k];
+
+            }
+        }
+
+    }
+
+    mayorApuestaFinal = mayoresApuestasPorRonda[0];
+    mayorRondaFinal = 1;
+
+    for(h=1;h<7;h++)
+    {
+        if(mayoresApuestasPorRonda[h]>mayorApuestaFinal)
+        {
+           mayorApuestaFinal = mayoresApuestasPorRonda[h];
+           mayorRondaFinal = h + 1;
+
+        }
+    }
+    printf("La mayor apuesta es %d, en la ronda %d\n", mayorApuestaFinal, mayorRondaFinal);
+
+}
+
 
 
 
@@ -818,11 +901,11 @@ int main2(){ //funcion para testear resolucion de apuestas
     return 0;
 }
 
-int main_final()
+int main()
 {
-    int nRondas = 0;
-    int nApuestas = 0;
-    int arraynApuestas[APUESTAMAX]
+    float nRondas = 0;
+    float nApuestas = 0;
+    int arraynApuestas[APUESTAMAX];
     int dineroTotalJugador = 1000;
     Apuesta apuestas[APUESTAMAX];
     int i;
@@ -835,12 +918,12 @@ int main_final()
 
 
     printf("Ingrese cuántas rondas desea jugar: ");
-    scanf("%d", &nRondas);
+    scanf("%f", &nRondas);
 
     for(i=0; i<nRondas; i++)
     {
-        printf("Indique cuántas apuestas desea realizar: ")
-        scanf("%d", &nApuestas);
+        printf("Indique cuántas apuestas desea realizar: ");
+        scanf("%f", &nApuestas);
         arraynApuestas[i]=nApuestas;
 
         preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
@@ -855,7 +938,11 @@ int main_final()
 
         }
 
-        porcentajeColor(conjuntoApuestas[i][j], arraynApuestas, nRondas);
+        printf("El promedio de apuestas por rondas es: %.2f.\n", nApuestas / nRondas);
+
+        porcentajeColor(conjuntoApuestas, arraynApuestas, nRondas);
+
+        apuestaMayorValor(conjuntoApuestas, arraynApuestas, nRondas);
 
     return 0;
 }
