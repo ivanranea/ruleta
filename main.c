@@ -740,11 +740,11 @@ void balanceFinal(ganancia_perdida *registroGananciaPerdida, int nApuestas){
 void porcentajeColor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas)
 {
     int i, j;
-    float porcentajerojo= 0.0;
-    float porcentajenegro = 0.0;
-    float rojo = 0.0;
-    float negro = 0.0;
-    float contApuesta = 0.0;
+    float porcentajerojo= 0;
+    float porcentajenegro = 0;
+    float rojo = 0;
+    float negro = 0;
+    float contApuesta = 0;
 
     for(i=0; i<nRondas; i++)
     {
@@ -764,12 +764,16 @@ void porcentajeColor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arrayn
             }
         }
     }
+    porcentajerojo = (rojo/contApuesta)*100;
+    porcentajenegro = (negro/contApuesta)*100;
 
-    porcentajerojo = rojo/contApuesta;
-    porcentajenegro = negro/contApuesta;
-
-    printf("El porcentaje de apuestas realizadas al color Rojo es %.2f.\nEl porcentaje de apuestas realizadas al color negro es %.2f.\n", porcentajerojo, porcentajenegro);
-
+    if(contApuesta==0)
+    {
+        printf("No hubo apuestas en Color\n");
+    }else
+    {
+        printf("El porcentaje de apuestas realizadas al color Rojo es %.2f%%.\nEl porcentaje de apuestas realizadas al color negro es %.2f%%.\n", porcentajerojo, porcentajenegro);
+    }
 }
 
 void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas){
