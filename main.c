@@ -776,11 +776,18 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
 
     int h, i, j, k;
 
-    int mayorDeApuestaPorRonda, mayorDeTodasLasRondas = 0;
+    int mayorDeApuestaPorRonda = 0;
+    int mayorDeTodasLasRondas = 0;
     int sumaTotales[7];
     int mayoresApuestasPorRonda[nRondas];
     int mayorApuestaFinal;
     int mayorRondaFinal;
+
+    for(i=0;i<7;i++)
+    {
+        sumaTotales[i] = 0;
+    }
+
 
     for(i=0; i<nRondas;i++)
     {
@@ -820,9 +827,15 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
             {
 
                 sumaTotales[6] += conjuntoApuestas[i][j].fichas;
+                printf("hahaha\n");
             }
 
 
+        }
+
+        for(i=0;i<7;i++)
+        {
+            printf("sumastotales, posicion %d : %d\n",i , sumaTotales[i]);
         }
 
         mayoresApuestasPorRonda[i] = sumaTotales[0];
