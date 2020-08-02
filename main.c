@@ -776,8 +776,7 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
 
     int h, i, j, k;
 
-    int mayorDeApuestaPorRonda = 0;
-    int mayorDeTodasLasRondas = 0;
+
     int sumaTotales[7];
     int mayoresApuestasPorRonda[nRondas];
     int mayorApuestaFinal;
