@@ -8,29 +8,29 @@
 #define TRUE 1
 #define FALSE 0
 
-#define A_PLENO 1
+#define A_PLENO 1 //Referencia al tipo de apuesta PLENO
 
-#define A_DOCENAS 2
-#define A_PRIMER_DOCENA 1
-#define A_SEGUNDA_DOCENA 2
-#define A_TERCERA_DOCENA 3
+#define A_DOCENAS 2 //Referencia al tipo de apuesta DOCENA
+#define A_PRIMER_DOCENA 1 //Referencia al valor de tipo DOCENA
+#define A_SEGUNDA_DOCENA 2 //Referencia al valor de tipo DOCENA
+#define A_TERCERA_DOCENA 3 //Referencia al valor de tipo DOCENA
 
-#define A_FALTA 3 // Apuestas del 1 al 18
+#define A_FALTA 3 //Referencia al tipo de apuesta FALTA
 
-#define A_PASA 4 // Apuestas del 19 al 36
+#define A_PASA 4 //Referencia al tipo de apuesta PASA
 
-#define A_COLOR 5
-#define A_COLOR_ROJO 1
-#define A_COLOR_NEGRO 2
+#define A_COLOR 5 //Referencia al tipo de apuesta COLOR
+#define A_COLOR_ROJO 1 //Referencia al valor de tipo COLOR
+#define A_COLOR_NEGRO 2 //Referencia al valor de tipo COLOR
 
 #define A_PARIDAD 6
-#define A_PARIDAD_PAR 1
-#define A_PARIDAD_IMPAR 2
+#define A_PARIDAD_PAR 1 //Referencia al valor de tipo PARIDAD
+#define A_PARIDAD_IMPAR 2 //Referencia al valor de tipo PARIDAD
 
-#define A_COLUMNA 7
-#define A_PRIMER_COLUMNA 1
-#define A_SEGUNDA_COLUMNA 2
-#define A_TERCERA_COLUMNA 3
+#define A_COLUMNA 7 //Referencia al tipo de apuesta COLUMNA
+#define A_PRIMER_COLUMNA 1 //Referencia al valor de tipo COLUMNA
+#define A_SEGUNDA_COLUMNA 2 //Referencia al valor de tipo COLUMNA
+#define A_TERCERA_COLUMNA 3 //Referencia al valor de tipo COLUMNA
 
 #define FICHATEMP_FALTA fichaTemp.falta==fichaTemp.pasa || fichaTemp.falta==fichaTemp.color || fichaTemp.falta==fichaTemp.paridad //Macro utilizada para, junto con un If, comprobar si se cumplen las condiciones para llamar a la función restricción en la apuesta FALTA
 #define FICHATEMP_PASA fichaTemp.pasa==fichaTemp.falta || fichaTemp.pasa==fichaTemp.color || fichaTemp.pasa==fichaTemp.paridad //Macro utilizada para, junto con un If, comprobar si se cumplen las condiciones para llamar a la función restricción en la apuesta PASA
@@ -54,16 +54,16 @@ typedef struct {
     int tipo; // Numero, paridad, color, fila, etc
     int valor; // 34, rojo, par, fila 2
     int fichas; // cantidad de fichas apostadas
-} Apuesta;
-// Para apostar 5 fichas al rojo Apuesta(tipo: 5, valor: 1, fichas: 5)
+} Apuesta; // Ejemplo: Para apostar 5 fichas al rojo - Apuesta(tipo: 5, valor: 1, fichas: 5)
 
-typedef struct {
+
+typedef struct { //Estructura para registrar ganancias y pérdidas de una apuesta
     int ganancia;
     int perdida;
 
 } ganancia_perdida;
 
-typedef struct{
+typedef struct{ //Estructura que registra las fichas apostadas en las apuestas que pagan doble y que son utilizadas en la función restricción
     int falta;
     int pasa;
     int color;
@@ -131,7 +131,7 @@ int main()
     int i, j;
     int nRondas = 0;
     int nApuestas = 0;
-    int dineroTotalJugador = 1000;
+    int dineroTotalJugador = 300;
     int arraynApuestas[RONDAMAX];
     Apuesta apuestas[APUESTAMAX];
     Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX];
@@ -139,6 +139,22 @@ int main()
     ganancia_perdida arrayregistroGananciaPerdida[RONDAMAX][APUESTAMAX];
     int giro = 0;
     int arrayGiros[RONDAMAX];
+
+    for(i=0; i<RONDAMAX; i++)
+    {
+        for(j=0; j<APUESTAMAX; j++)
+        {
+            apuestas[j].tipo = 0;
+            apuestas[j].valor = 0;
+            apuestas[j].fichas = 0;
+            conjuntoApuestas[i][j] = apuestas[j];
+            registroGananciaPerdida[j].ganancia = 0;
+            registroGananciaPerdida[j].perdida = 0;
+            arrayregistroGananciaPerdida[i][j] = registroGananciaPerdida[j];
+            arraynApuestas[j] = 0;
+        }
+        arrayGiros[i] = 0;
+    }
 
     printf("Bienvenido al programa de Ruleta Europea.\n\n");
     printf("Ingrese la cantidad de rondas desea jugar: ");
@@ -155,38 +171,43 @@ int main()
 
     for(i=0; i<nRondas; i++)
     {
-        printf("Ronda número %d.\n", i+1);
-        printf("Indique cuántas apuestas desea realizar: ");
-        scanf("%d", &nApuestas);
-
-        while(nApuestas>10)
+        if(dineroTotalJugador>0)
         {
-            printf("La cantidad máxima de apuestas es de 10, ingrese otro número.\n");
-            printf("Apuestas a jugar: ");
+            printf("Ronda número %d.\n", i+1);
+            printf("Indique cuántas apuestas desea realizar: ");
             scanf("%d", &nApuestas);
-        }
 
-        printf("\n");
+            while(nApuestas>10)
+            {
+                printf("La cantidad máxima de apuestas es de 10, ingrese otro número.\n");
+                printf("Apuestas a jugar: ");
+                scanf("%d", &nApuestas);
+            }
 
-        arraynApuestas[i]=nApuestas;
+            printf("\n");
 
-        preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
+            arraynApuestas[i]=nApuestas;
 
-        for(j=0; j<nApuestas; j++)
+            preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
+
+            for(j=0; j<nApuestas; j++)
+            {
+                conjuntoApuestas[i][j] = apuestas[j];
+            }
+            giro = giroRuleta();
+            arrayGiros[i] = giro;
+            printf("\nEl resultado del giro de la ruleta fue %d\n", giro);
+
+            resolucionApuestas(apuestas, registroGananciaPerdida, nApuestas, giro);
+
+            for(j=0; j<nApuestas; j++)
+            {
+                arrayregistroGananciaPerdida[i][j]=registroGananciaPerdida[j];
+            }
+        }else
         {
-            conjuntoApuestas[i][j] = apuestas[j];
-        }
-        giro = giroRuleta();
-        arrayGiros[i] = giro;
-        printf("El resultado del giro de la ruleta fue %d\n", giro);
 
-        resolucionApuestas(apuestas, registroGananciaPerdida, nApuestas, giro);
-
-
-
-        for(j=0; j<nApuestas; j++)
-        {
-            arrayregistroGananciaPerdida[i][j]=registroGananciaPerdida[j];
+            break;
         }
     }
 
@@ -444,7 +465,6 @@ ganancia_perdida registrarGananciaColumna(Apuesta apuesta, int giro){
     return g;
 }
 
-    /// INICIO FUNCION RESOLUCION DE PREMIOS
 void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPerdida, int nApuestas, int giro){
 
     int i;
@@ -490,7 +510,7 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
 
             default: break;
 
-        } //Fin switch principal
+        }
 
         if(registroGananciaPerdida[i].ganancia>0){
             printf("\nResultado apuesta numero %d:\nPerdida de mesa (Ganancia de jugador): $%d\n", i+1, registroGananciaPerdida[i].ganancia);
@@ -510,7 +530,7 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
     }
 
 
-    if(ganancia==0) // Deberiamos mostrar las ganancias totales o ir mostrando los resultados de cada apuesta.
+    if(ganancia==0)
     {
         printf("\nLa ganancia de la mesa fue: $%d.\nEl jugador no tuvo ganancias.\n\n", perdida);
 
@@ -521,13 +541,11 @@ void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPer
     {
         printf("\nLa ganancia de la mesa fue: $%d.\nLa ganancia del jugador fue: $%d.\n\n", perdida, ganancia);
     }
-
-
-} // Fin funcion resolucion de premios
+}
 
 int registrarMontoFichas(int *dineroTotalJugador)
 {
-    // Pasar como parametro dineroTotalJugador
+
     int fichasTemp = 0;
     int fichasApostadas = 0;
 
@@ -553,12 +571,10 @@ int registrarMontoFichas(int *dineroTotalJugador)
                 printf("Ingreso incorrecto.\nIngrese un valor de ficha disponible ($1, $2, $5, $10, $50, $100): ");
                 scanf("%d", &fichasTemp);
             }
-
         }
 
         if(fichasTemp==0)
         {
-
             break;
         }
         else
@@ -572,17 +588,13 @@ int registrarMontoFichas(int *dineroTotalJugador)
                 fichasApostadas = 0;
                 fichasTemp = 0;
 
-
             }
             else
             {
                 *dineroTotalJugador -= fichasTemp;
                 fichasApostadas += fichasTemp;
                 printf("\nApuesta total: $%d\n", fichasApostadas);
-
-
             }
-
         }
     }
     return fichasApostadas; //retornar entero que representa fichas
@@ -709,84 +721,130 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
     fichaTemp.color = 0;
     fichaTemp.paridad = 0;
 
-    mostrarMesa();
-
-    for(i=0; i<nApuestas; i++) // Comienzo for apuestas
+    if(*dineroTotalJugador>0)
     {
-        if(i==(nApuestas-2))
-        {
-            printf("Esta es su penúltima apuesta\n");
-        }
+        mostrarMesa();
 
-        int tipoApuestas;
-        printf("\n1.Pleno\n2.Docenas\n3.Falta (1 al 18)\n4.Pasa (19 al 36)\n5.Color\n6.Pares o Impares\n7.Columnas\n");
-        printf("\nApuesta nro %d: ", i+1);
-        scanf("%d", &tipoApuestas);
-
-        while(tipoApuestas<=0 || tipoApuestas>7)
+        for(i=0; i<nApuestas; i++) // Comienzo for apuestas
         {
-            printf("Ingreso incorrecto, elija un tipo de apuesta (1 al 7): ");
+            if(*dineroTotalJugador==0)
+            {
+                printf("\nSe ha quedado sin fichas para jugar\n");
+                break;
+            }
+
+            if(i==(nApuestas-2))
+            {
+                printf("\nEsta es su penúltima apuesta\n");
+            }
+
+            int tipoApuestas;
+            printf("\n1.Pleno\n2.Docenas\n3.Falta (1 al 18)\n4.Pasa (19 al 36)\n5.Color\n6.Pares o Impares\n7.Columnas\n");
+            printf("\nApuesta nro %d: ", i+1);
             scanf("%d", &tipoApuestas);
-        }
 
-        switch(tipoApuestas) //Inicio Swith Tipo Apuestas
-        {
-        case A_PLENO: //Plenos
-            apuestas[i] = registrarApuestaPlenos(dineroTotalJugador);
-            break;
-
-        case A_DOCENAS: //Docenas
-            apuestas[i] = registrarApuestaDocenas(dineroTotalJugador);
-            break;
-
-        case A_FALTA:  // Falta
-            apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
-            fichaTemp.falta = apuestas[i].fichas;
-
-            if(FICHATEMP_FALTA)
+            while(tipoApuestas<=0 || tipoApuestas>7)
             {
-                restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
-            }
-            break;
-
-        case A_PASA:  // Pasa
-            apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
-            fichaTemp.pasa = apuestas[i].fichas;
-            if(FICHATEMP_PASA)
-            {
-                restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
-            }
-            break;
-
-        case A_COLOR: // Color
-            apuestas[i] = registrarApuestaColor(dineroTotalJugador);
-            fichaTemp.color = apuestas[i].fichas;
-             if(FICHATEMP_COLOR)
-            {
-                restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+                printf("Ingreso incorrecto, elija un tipo de apuesta (1 al 7): ");
+                scanf("%d", &tipoApuestas);
             }
 
-            break;
-
-        case A_PARIDAD: // Par o Impar
-            apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
-            fichaTemp.paridad = apuestas[i].fichas;
-             if(FICHATEMP_PARIDAD)
+            switch(tipoApuestas) //Inicio Swith Tipo Apuestas
             {
-                restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
-            }
+            case A_PLENO: //Plenos
+                if(*dineroTotalJugador==0)
+                {
+                    printf("\nSe ha quedado sin fichas para jugar\n");
+                    break;
+                }
+                apuestas[i] = registrarApuestaPlenos(dineroTotalJugador);
+                break;
 
-            break;
+            case A_DOCENAS: //Docenas
+                if(*dineroTotalJugador==0)
+                {
+                    printf("\nSe ha quedado sin fichas para jugar\n");
+                    break;
+                }
+                apuestas[i] = registrarApuestaDocenas(dineroTotalJugador);
+                break;
 
-        case A_COLUMNA: // Columnas =
-            apuestas[i] = registrarApuestaColumna(dineroTotalJugador);
+            case A_FALTA:  // Falta
+                if(*dineroTotalJugador==0)
+                {
+                    printf("\nSe ha quedado sin fichas para jugar\n");
+                    break;
+                }
+                apuestas[i] = registrarApuestaFalta(dineroTotalJugador);
+                fichaTemp.falta = apuestas[i].fichas;
 
-            break;
+                if(FICHATEMP_FALTA)
+                {
+                    restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+                }
+                break;
 
-        default: break;
+            case A_PASA:  // Pasa
+                if(*dineroTotalJugador==0)
+                {
+                    printf("\nSe ha quedado sin fichas para jugar\n");
+                    break;
+                }
+                apuestas[i] = registrarApuestaPasa(dineroTotalJugador);
+                fichaTemp.pasa = apuestas[i].fichas;
+                if(FICHATEMP_PASA)
+                {
+                    restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+                }
+                break;
 
-        } // Fin Switch Tipo Apuestas
-    } //Fin for Apuestas
+            case A_COLOR: // Color
+                if(*dineroTotalJugador==0)
+                {
+                    printf("\nSe ha quedado sin fichas para jugar\n");
+                    break;
+                }
+                apuestas[i] = registrarApuestaColor(dineroTotalJugador);
+                fichaTemp.color = apuestas[i].fichas;
+                 if(FICHATEMP_COLOR)
+                {
+                    restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+                }
+
+                break;
+
+            case A_PARIDAD: // Par o Impar
+                if(*dineroTotalJugador==0)
+                {
+                    printf("\nSe ha quedado sin fichas para jugar\n");
+                    break;
+                }
+                apuestas[i] = registrarApuestaParidad(dineroTotalJugador);
+                fichaTemp.paridad = apuestas[i].fichas;
+                 if(FICHATEMP_PARIDAD)
+                {
+                    restriccion(apuestas, i, dineroTotalJugador, &fichaTemp);
+                }
+
+                break;
+
+            case A_COLUMNA: // Columnas
+                if(*dineroTotalJugador==0)
+                {
+                    printf("\nSe ha quedado sin fichas para jugar\n");
+                    break;
+                }
+                apuestas[i] = registrarApuestaColumna(dineroTotalJugador);
+                break;
+
+            default: break;
+
+            } // Fin Switch Tipo Apuestas
+        } //Fin for Apuestas
+    }else
+    {
+        printf("\nSe ha quedado sin fichas para jugar\n");
+    }
 }
 
 void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *fichaTemp){ // Restricción para que el usuario no pueda apostar la misma cantidad de fichas en las apuestas de Falta, Pasa, Color y Par o Impar.
@@ -832,7 +890,6 @@ void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *
             fichaTemp->paridad = apuestas[i].fichas;
         }
     }
-
 }
 
 void balanceFinal(ganancia_perdida arrayregistroGananciaPerdida[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas){
@@ -848,7 +905,6 @@ void balanceFinal(ganancia_perdida arrayregistroGananciaPerdida[RONDAMAX][APUEST
             ganancia += arrayregistroGananciaPerdida[i][j].ganancia; ///Se refiere a la ganancia del apostador
             perdida += arrayregistroGananciaPerdida[i][j].perdida;  ///Se refiere a la perdida del apostador
         }
-
     }
 
     printf("Ganancia total de mesa: $%d\nPerdida total de mesa: $%d\n", perdida, ganancia);
@@ -959,7 +1015,6 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
 
                 sumaTotales[6] += conjuntoApuestas[i][j].fichas;
             }
-
         }
 
         mayoresApuestasPorRonda[i] = sumaTotales[0];
@@ -969,10 +1024,8 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
             if(sumaTotales[k]>mayoresApuestasPorRonda[i])
             {
                mayoresApuestasPorRonda[i] = sumaTotales[k];
-
             }
         }
-
     }
 
     mayorApuestaFinal = mayoresApuestasPorRonda[0];
@@ -984,7 +1037,6 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
         {
            mayorApuestaFinal = mayoresApuestasPorRonda[h];
            mayorRondaFinal = h + 1;
-
         }
     }
     printf("La mayor apuesta es %d, en la ronda %d\n", mayorApuestaFinal, mayorRondaFinal);
@@ -1059,11 +1111,9 @@ void mostrarMesa() ///Funcion para mostrar el paño de la ruleta europea
                 printf(" | 2 a 1 |\n");
             }
         }
-
     }
     printf("  Primeros 12    |    Segundos 12    |    Terceros 12       | \n");
     printf("  1 - 18 | PARES |\x1b[47m\x1b[31m  ROJO  \x1b[0m|\x1b[47m\x1b[30m  NEGRO  \x1b[0m |  IMPAR  |  19 - 36   | ");
-
 }
 
 void giroIgualColor(int *arrayGiros, int nRondas)
@@ -1168,7 +1218,6 @@ void ceroOmultiplosdeDiez(int *arrayGiros, int nRondas)
     {
         printf("En los resultados del giro de la ruleta no salió el 0 ni ningún múltiplo de 10");
     }
-
 }
 
 void numeroPrimo(int *arrayGiros, int nRondas)
@@ -1190,7 +1239,6 @@ void numeroPrimo(int *arrayGiros, int nRondas)
         {
             primo++;
         }
-
     }
 
     if(primo>0)
