@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define CANTROJOS 18
-#define CANTNEGROS 18
+#define CANTCOLOR 18 //Cantidad de números de la categoría ROJOS y NEGROS (cada uno tiene 18)
 #define NROSPORCOLUMNA 12
-#define RONDAMAX 20
-#define APUESTAMAX 10
+#define RONDAMAX 20 //Cantidad máxima de rondas que el jugador puede jugar
+#define APUESTAMAX 10 //Cantidad máxima de apuestas que el jugador puede realizar en una ronda
 #define TRUE 1
 #define FALSE 0
 
@@ -16,9 +15,9 @@
 #define A_SEGUNDA_DOCENA 2
 #define A_TERCERA_DOCENA 3
 
-#define A_FALTA 3 // Apuestas del 1..18
+#define A_FALTA 3 // Apuestas del 1 al 18
 
-#define A_PASA 4 // Apuestas del 19..36
+#define A_PASA 4 // Apuestas del 19 al 36
 
 #define A_COLOR 5
 #define A_COLOR_ROJO 1
@@ -33,18 +32,23 @@
 #define A_SEGUNDA_COLUMNA 2
 #define A_TERCERA_COLUMNA 3
 
-#define FICHATEMP_FALTA fichaTemp.falta==fichaTemp.pasa || fichaTemp.falta==fichaTemp.color || fichaTemp.falta==fichaTemp.paridad
-#define FICHATEMP_PASA fichaTemp.pasa==fichaTemp.falta || fichaTemp.pasa==fichaTemp.color || fichaTemp.pasa==fichaTemp.paridad
-#define FICHATEMP_COLOR fichaTemp.color==fichaTemp.falta || fichaTemp.color==fichaTemp.pasa || fichaTemp.color==fichaTemp.paridad
-#define FICHATEMP_PARIDAD fichaTemp.paridad==fichaTemp.falta || fichaTemp.paridad==fichaTemp.pasa || fichaTemp.paridad==fichaTemp.color
+#define FICHATEMP_FALTA fichaTemp.falta==fichaTemp.pasa || fichaTemp.falta==fichaTemp.color || fichaTemp.falta==fichaTemp.paridad //Macro utilizada para, junto con un If, comprobar si se cumplen las condiciones para llamar a la función restricción en la apuesta FALTA
+#define FICHATEMP_PASA fichaTemp.pasa==fichaTemp.falta || fichaTemp.pasa==fichaTemp.color || fichaTemp.pasa==fichaTemp.paridad //Macro utilizada para, junto con un If, comprobar si se cumplen las condiciones para llamar a la función restricción en la apuesta PASA
+#define FICHATEMP_COLOR fichaTemp.color==fichaTemp.falta || fichaTemp.color==fichaTemp.pasa || fichaTemp.color==fichaTemp.paridad //Macro utilizada para, junto con un If, comprobar si se cumplen las condiciones para llamar a la función restricción en la apuesta COLOR
+#define FICHATEMP_PARIDAD fichaTemp.paridad==fichaTemp.falta || fichaTemp.paridad==fichaTemp.pasa || fichaTemp.paridad==fichaTemp.color //Macro utilizada para, junto con un If, comprobar si se cumplen las condiciones para llamar a la función restricción en la apuesta PARIDAD
+
+#define ROJO_3 tercer_columna==3 || tercer_columna==9 || tercer_columna==12 || tercer_columna==18 || tercer_columna==21 || tercer_columna==27 || tercer_columna==30 || tercer_columna==36
+#define NEGRO_3 tercer_columna==6 || tercer_columna==15 || tercer_columna==24 || tercer_columna==33
+#define ROJO_2 segunda_columna==5 || segunda_columna==14 || segunda_columna==23 || segunda_columna==32 || segunda_columna==21 || segunda_columna==27 || segunda_columna==30 || segunda_columna==36
+#define NEGRO_2 segunda_columna==2 || segunda_columna==8 || segunda_columna==11 || segunda_columna==17 || segunda_columna==20 || segunda_columna==26 || segunda_columna==29 || segunda_columna==35
+#define ROJO_1 primer_columna==1 || primer_columna==7 || primer_columna==16 || primer_columna==19 || primer_columna==25 || primer_columna==34
+#define NEGRO_1 primer_columna==4 || primer_columna==10 || primer_columna==13 || primer_columna==22 || primer_columna==28 || primer_columna==31
 
 const int numerosRojos[] = {1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36};
 const int numerosNegros[] = {2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35};
 const int columna1[] = {1,4,7,10,13,16,19,22,25,28,31,34};
 const int columna2[] = {2,5,8,11,14,17,20,23,26,29,32,35};
 const int columna3[] = {3,6,9,12,15,18,21,24,27,30,33,36};
-
-
 
 typedef struct {
     int tipo; // Numero, paridad, color, fila, etc
@@ -67,17 +71,138 @@ typedef struct{
 
 } ficha_temp;
 
-void imprimirApuesta(Apuesta a){
-    printf("Apuesta | tipo: %d | valor: %d | fichas: %d |\n", a.tipo, a.valor, a.fichas);
+void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *fichaTemp); //Funcion de restriccion para que el jugador no pueda apostar la misma cantidad de fichas a apuestas que pagan doble
+
+ganancia_perdida registrarGananciaPleno(Apuesta apuesta, int giro); //Resuelve los premios de lo apostado en PLENO y devuelve una estructura que contiene la ganancia y pérdida de la misma
+
+ganancia_perdida registrarGananciaDocenas(Apuesta apuesta, int giro); //Resuelve los premios de lo apostado en DOCENAS y devuelve una estructura que contiene la ganancia y pérdida de la misma
+
+ganancia_perdida registrarGananciaFalta(Apuesta apuesta, int giro); //Resuelve los premios de lo apostado en FALTA y devuelve una estructura que contiene la ganancia y pérdida de la misma
+
+ganancia_perdida registrarGananciaPasa(Apuesta apuesta, int giro); //Resuelve los premios de lo apostado en PASA y devuelve una estructura que contiene la ganancia y pérdida de la misma
+
+ganancia_perdida registrarGananciaColor(Apuesta apuesta, int giro); //Resuelve los premios de lo apostado en COLOR y devuelve una estructura que contiene la ganancia y pérdida de la misma
+
+ganancia_perdida registrarGananciaParidad(Apuesta apuesta, int giro); //Resuelve los premios de lo apostado en PARIDAD y devuelve una estructura que contiene la ganancia y pérdida de la misma
+
+ganancia_perdida registrarGananciaColumna(Apuesta apuesta, int giro); //Resuelve los premios de lo apostado en COLUMNA y devuelve una estructura que contiene la ganancia y pérdida de la misma
+
+void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPerdida, int nApuestas, int giro); //Registra e imprime las ganancias y las pérdidas en una ronda de apuestas
+
+int registrarMontoFichas(int *dineroTotalJugador); //Se encarga de mostrar las opciones  de fichas disponibles para apostar, dinero total del jugador, y hace un registro de las fichas ingresadas por el usuario
+
+Apuesta registrarApuestaPlenos(int *dineroTotalJugador); //Registra una apuesta a Pleno
+
+Apuesta registrarApuestaDocenas(int *dineroTotalJugador); //Registra una apuesta a Docenas
+
+Apuesta registrarApuestaFalta(int *dineroTotalJugador); //Registra una apuesta a Falta
+
+Apuesta registrarApuestaPasa(int *dineroTotalJugador); //Registra una apuesta a Pasa
+
+Apuesta registrarApuestaColor(int *dineroTotalJugador); //Registra una apuesta a Color
+
+Apuesta registrarApuestaParidad(int *dineroTotalJugador); //Registra una apuesta a Paridad
+
+Apuesta registrarApuestaColumna(int *dineroTotalJugador); //Registra una apuesta a Columna
+
+void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTotalJugador); //Muestra el paño y las opciones de apuesta, permite ingresar una cantidad de apuestas y llama según corresponda a las funciones para registrar apuestas
+
+void balanceFinal(ganancia_perdida arrayregistroGananciaPerdida[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas); //Muestra los resultados finales de ganancias y périddas
+
+void porcentajeColor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas); //Compara los porcentajes de las apuestas realizadas a ROJO y NEGRO
+
+void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas); //Muestra cuál fue la mayor cantidad de fichas apostadas y en qué ronda sucedió
+
+void mostrarMesa(); //Funcion para mostrar el paño de la ruleta europea
+
+void giroIgualColor(int *arrayGiros, int nRondas);  //Muestra si en más de cinco rondas seguidas la bola cayó en números de igual color
+
+void promedioApuestasPorRonda(int *arraynApuestas, int nRondas); //Calcula y muestra el promedio de apuestas por ronda
+
+void ceroOmultiplosdeDiez(int *arrayGiros, int nRondas); //Muestra si la bola cayó en el número 0 o algún multiplo de 10
+
+void numeroPrimo(int *arrayGiros, int nRondas); //Calcula y muestra cuántas veces la bola cayó en un número primo
+
+int giroRuleta(); //Genera aleatoreamente un número entre 0 y 36
+
+/// INICIO MAIN
+int main()
+{
+    int i, j;
+    int nRondas = 0;
+    int nApuestas = 0;
+    int dineroTotalJugador = 1000;
+    int arraynApuestas[RONDAMAX];
+    Apuesta apuestas[APUESTAMAX];
+    Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX];
+    ganancia_perdida registroGananciaPerdida[APUESTAMAX];
+    ganancia_perdida arrayregistroGananciaPerdida[RONDAMAX][APUESTAMAX];
+    int giro = 0;
+    int arrayGiros[RONDAMAX];
+
+    printf("Bienvenido al programa de Ruleta Europea.\n\n");
+    printf("Ingrese la cantidad de rondas desea jugar: ");
+    scanf("%d", &nRondas);
+
+    while(nRondas>20)
+    {
+        printf("La cantidad máxima de rondas es de 20, ingrese otro número.\n");
+        printf("Rondas a jugar: ");
+        scanf("%d", &nRondas);
+    }
+
+    printf("\n");
+
+    for(i=0; i<nRondas; i++)
+    {
+        printf("Ronda número %d.\n", i+1);
+        printf("Indique cuántas apuestas desea realizar: ");
+        scanf("%d", &nApuestas);
+
+        while(nApuestas>10)
+        {
+            printf("La cantidad máxima de apuestas es de 10, ingrese otro número.\n");
+            printf("Apuestas a jugar: ");
+            scanf("%d", &nApuestas);
+        }
+
+        printf("\n");
+
+        arraynApuestas[i]=nApuestas;
+
+        preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
+
+        for(j=0; j<nApuestas; j++)
+        {
+            conjuntoApuestas[i][j] = apuestas[j];
+        }
+        giro = giroRuleta();
+        arrayGiros[i] = giro;
+        printf("El resultado del giro de la ruleta fue %d\n", giro);
+
+        resolucionApuestas(apuestas, registroGananciaPerdida, nApuestas, giro);
+
+
+
+        for(j=0; j<nApuestas; j++)
+        {
+            arrayregistroGananciaPerdida[i][j]=registroGananciaPerdida[j];
+        }
+    }
+
+        promedioApuestasPorRonda(arraynApuestas, nRondas);
+        porcentajeColor(conjuntoApuestas, arraynApuestas, nRondas);
+        giroIgualColor(arrayGiros, nRondas);
+        apuestaMayorValor(conjuntoApuestas, arraynApuestas, nRondas);
+        numeroPrimo(arrayGiros, nRondas);
+        balanceFinal(arrayregistroGananciaPerdida, arraynApuestas, nRondas);
+
+
+
+    return 0;
 }
 
-void imprimirGanancia(ganancia_perdida g){
-    printf("Ganancia: %d | Perdida: %d\n", g.ganancia, g.perdida);
-}
-
-
-void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *fichaTemp);
-
+///FIN MAIN
 
 ganancia_perdida registrarGananciaPleno(Apuesta apuesta, int giro){
     ganancia_perdida g;
@@ -165,7 +290,7 @@ ganancia_perdida registrarGananciaColor(Apuesta apuesta, int giro){
     {
         case A_COLOR_ROJO: //Rojo
 
-            for(i=0; i<CANTROJOS; i++)
+            for(i=0; i<CANTCOLOR; i++)
             {
                 if(giro==numerosRojos[i])
                 {
@@ -182,7 +307,7 @@ ganancia_perdida registrarGananciaColor(Apuesta apuesta, int giro){
 
         case A_COLOR_NEGRO: //Negro
 
-            for(i=0; i<CANTNEGROS; i++)
+            for(i=0; i<CANTCOLOR; i++)
             {
                 if(giro==numerosNegros[i])
                 {
@@ -323,6 +448,8 @@ ganancia_perdida registrarGananciaColumna(Apuesta apuesta, int giro){
 void resolucionApuestas(Apuesta *apuestas, ganancia_perdida *registroGananciaPerdida, int nApuestas, int giro){
 
     int i;
+
+
     for(i=0; i<nApuestas; i++) // Inicio for principal
     {
         Apuesta a = apuestas[i];
@@ -573,8 +700,6 @@ Apuesta registrarApuestaColumna(int *dineroTotalJugador)
     return a;
 }
 
-
-
 void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTotalJugador)
 {
     int i;
@@ -584,7 +709,7 @@ void preguntarApuestasAlUsuario(Apuesta *apuestas, int nApuestas, int *dineroTot
     fichaTemp.color = 0;
     fichaTemp.paridad = 0;
 
-    //Llamar funcion mostrar paño
+    mostrarMesa();
 
     for(i=0; i<nApuestas; i++) // Comienzo for apuestas
     {
@@ -710,15 +835,20 @@ void restriccion(Apuesta *apuestas, int i, int *dineroTotalJugador, ficha_temp *
 
 }
 
-void balanceFinal(ganancia_perdida *registroGananciaPerdida, int nApuestas){
+void balanceFinal(ganancia_perdida arrayregistroGananciaPerdida[RONDAMAX][APUESTAMAX], int *arraynApuestas, int nRondas){
 
+    int i, j;
     int ganancia = 0;
     int perdida = 0;
 
-    for(int i=0; i<nApuestas; i++)
+    for(i=0; i<nRondas; i++)
     {
-        ganancia += registroGananciaPerdida[i].ganancia; ///Se refiere a la ganancia del apostador
-        perdida += registroGananciaPerdida[i].perdida;  ///Se refiere a la perdida del apostador
+        for(j=0; j<arraynApuestas[i]; j++)
+        {
+            ganancia += arrayregistroGananciaPerdida[i][j].ganancia; ///Se refiere a la ganancia del apostador
+            perdida += arrayregistroGananciaPerdida[i][j].perdida;  ///Se refiere a la perdida del apostador
+        }
+
     }
 
     printf("Ganancia total de mesa: $%d\nPerdida total de mesa: $%d\n", perdida, ganancia);
@@ -780,7 +910,6 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
 
     int h, i, j, k;
 
-    int mayorDeApuestaPorRonda, mayorDeTodasLasRondas = 0;
     int sumaTotales[7];
     int mayoresApuestasPorRonda[nRondas];
     int mayorApuestaFinal;
@@ -788,7 +917,12 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
 
     for(i=0; i<nRondas;i++)
     {
-        for(j=0;j<arraynApuestas[i];j++)
+        for(j=0; j<7; j++)
+        {
+            sumaTotales[j] = 0;
+        }
+
+        for(j=0; j<arraynApuestas[i]; j++)
         {
             if(conjuntoApuestas[i][j].tipo == A_PLENO)
             {
@@ -820,12 +954,11 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
 
                 sumaTotales[5] += conjuntoApuestas[i][j].fichas;
 
-            }else
+            }else if(conjuntoApuestas[i][j].tipo == A_COLUMNA)
             {
 
                 sumaTotales[6] += conjuntoApuestas[i][j].fichas;
             }
-
 
         }
 
@@ -845,7 +978,7 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
     mayorApuestaFinal = mayoresApuestasPorRonda[0];
     mayorRondaFinal = 1;
 
-    for(h=1;h<7;h++)
+    for(h=1;h<nRondas;h++)
     {
         if(mayoresApuestasPorRonda[h]>mayorApuestaFinal)
         {
@@ -855,98 +988,230 @@ void apuestaMayorValor(Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX], int *arra
         }
     }
     printf("La mayor apuesta es %d, en la ronda %d\n", mayorApuestaFinal, mayorRondaFinal);
-
 }
 
-
-
-
-int main3(){
-    // Esta funcion es un test para preguntarApuestasAlUsuario()
-    int dineroTotalJugador = 1000;
-    int nApuestas;
-    int i;
-    printf("Elija la cantidad de apuestas: ");
-    scanf("%d", &nApuestas);
-    Apuesta apuestas[nApuestas];
-    preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
-    for (i=0; i<nApuestas; i++)
-    {
-        imprimirApuesta(apuestas[i]);
-    }
-    return 0;
-}
-
-int main2(){ //funcion para testear resolucion de apuestas
-    int i;
-    int nApuestas = 7;
-    Apuesta apuestas[nApuestas];
-    int giro = 1;
-    for(i=0; i<nApuestas; i++)
-    {
-        apuestas[i].tipo = 1+i;
-        apuestas[i].valor = 1;
-        apuestas[i].fichas = 10;
-    }
-
-    for(i=0; i<nApuestas; i++){
-        imprimirApuesta(apuestas[i]);
-
-    }
-
-    ganancia_perdida registroGananciaPerdida[nApuestas];
-
-    resolucionApuestas(apuestas, registroGananciaPerdida, nApuestas, giro);
-
-    for(i=0; i<nApuestas; i++)
-    {
-        imprimirGanancia(registroGananciaPerdida[i]);
-    }
-    return 0;
-}
-
-int main()
+void mostrarMesa() ///Funcion para mostrar el paño de la ruleta europea
 {
-    float nRondas = 0;
-    float nApuestas = 0;
-    int arraynApuestas[APUESTAMAX];
-    int dineroTotalJugador = 1000;
-    Apuesta apuestas[APUESTAMAX];
     int i;
-    int j;
-    Apuesta conjuntoApuestas[RONDAMAX][APUESTAMAX];
-    ganancia_perdida registroGananciaPerdida;
-    registroGananciaPerdida.ganancia = 0;
-    registroGananciaPerdida.perdida = 0;
-    int giro = 3;
+    int tercer_columna = 3;
+    int segunda_columna = 2;
+    int primer_columna = 1;
 
+    for(i=0; i<36; i++)
+    {
+        if(tercer_columna<=36)
+        {
+            if(tercer_columna==3)
+            {
+                printf("\x1b[47m  "); ///Espacio para que que la tercer fila quede alineada con la segunda fila
+            }
+            if(ROJO_3)
+            {
+                printf("\x1b[47m\x1b[31m%d   \x1b[0m", tercer_columna);
+            }else if(NEGRO_3)
+            {
+                printf("\x1b[47m\x1b[30m%d   \x1b[0m", tercer_columna);
+            }
 
-    printf("Ingrese cuántas rondas desea jugar: ");
-    scanf("%f", &nRondas);
+            tercer_columna += 3;
+            if(tercer_columna>36)
+            {
+                printf(" | 2 a 1 |\n");
+            }
+        }
+        if(tercer_columna>36 && segunda_columna<=35)
+        {
+            if(segunda_columna==2)
+            {
+                printf("\x1b[47m\x1b[32m0 \x1b[0m");
+            }
+            if(ROJO_2)
+            {
+                printf("\x1b[47m\x1b[31m%d   \x1b[0m", segunda_columna);
+            }else if(NEGRO_2)
+            {
+                printf("\x1b[47m\x1b[30m%d   \x1b[0m", segunda_columna);
+            }
+
+            segunda_columna += 3;
+            if(segunda_columna>35)
+            {
+                printf(" | 2 a 1 |\n");
+            }
+        }
+        if(tercer_columna>36 && segunda_columna>35 && primer_columna<=34)
+        {
+            if(primer_columna==1)
+            {
+                printf("\x1b[47m  "); ///Espacio para que que la primer fila quede alineada con la segunda fila
+            }
+            if(ROJO_1)
+            {
+                printf("\x1b[47m\x1b[31m%d   \x1b[0m", primer_columna);
+            }else if(NEGRO_1)
+            {
+                printf("\x1b[47m\x1b[30m%d   \x1b[0m", primer_columna);
+            }
+
+            primer_columna += 3;
+            if(primer_columna>34)
+            {
+                printf(" | 2 a 1 |\n");
+            }
+        }
+
+    }
+    printf("  Primeros 12    |    Segundos 12    |    Terceros 12       | \n");
+    printf("  1 - 18 | PARES |\x1b[47m\x1b[31m  ROJO  \x1b[0m|\x1b[47m\x1b[30m  NEGRO  \x1b[0m |  IMPAR  |  19 - 36   | ");
+
+}
+
+void giroIgualColor(int *arrayGiros, int nRondas)
+{
+    int i, j;
+    int contIgualColorRojo = 0;
+    int contIgualColorNegro = 0;
+    int seguidoRojo = FALSE;
+    int seguidoNegro = FALSE;
 
     for(i=0; i<nRondas; i++)
     {
-        printf("Indique cuántas apuestas desea realizar: ");
-        scanf("%f", &nApuestas);
-        arraynApuestas[i]=nApuestas;
-
-        preguntarApuestasAlUsuario(apuestas, nApuestas, &dineroTotalJugador);
-
-        for(j=0; j<nApuestas; j++)
+        for(j=0; j<CANTCOLOR; j++)
         {
-            conjuntoApuestas[i][j] = apuestas[j];
+            if(arrayGiros[i]==numerosRojos[j])
+            {
+                contIgualColorRojo ++;
 
+                if(contIgualColorNegro>0)
+                {
+                    contIgualColorNegro = 0;
+                }
+                if(contIgualColorRojo>=5)
+                {
+                    seguidoRojo = TRUE;
+                }
+
+            }else if(arrayGiros[i]==numerosNegros[j])
+            {
+                contIgualColorNegro ++;
+
+                 if(contIgualColorRojo>0)
+                {
+                    contIgualColorRojo = 0;
+                }
+                if(contIgualColorNegro>=5)
+                {
+                    seguidoNegro = TRUE;
+                }
+            }
         }
-        //funcion giroRuleta
-        resolucionApuestas(apuestas, &registroGananciaPerdida, nApuestas, giro);
+    }
 
+    if(seguidoRojo==TRUE && seguidoNegro==FALSE)
+    {
+        printf("La bola cayó en números rojos 5 veces seguidas.\n");
+
+    }else if(seguidoNegro==TRUE && seguidoRojo==FALSE)
+    {
+        printf("La bola cayó en números negros 5 veces seguidas.\n");
+    }else if(seguidoRojo==TRUE && seguidoNegro==TRUE)
+    {
+        printf("La bola cayó 5 veces seguidas tanto en números rojos como negros.\n");
+    }else
+    {
+        printf("La bola no cayó 5 veces seguidas en números del mismo color.\n");
+    }
+}
+
+void promedioApuestasPorRonda(int *arraynApuestas, int nRondas)
+{
+    float totalApuestas = 0;
+    int i;
+
+    for(i=0; i<nRondas; i++)
+    {
+        totalApuestas += arraynApuestas[i];
+    }
+    printf("El promedio de apuestas por rondas es: %.2f.\n", totalApuestas / nRondas);
+}
+
+void ceroOmultiplosdeDiez(int *arrayGiros, int nRondas)
+{
+    int i=0;
+    int cero = FALSE;
+    int multiplo = FALSE;
+
+    for(i=0; i<nRondas; i++)
+    {
+         if(arrayGiros[i]==0)
+         {
+             cero=TRUE;
+         }
+         if(arrayGiros[i]%10==0)
+         {
+             multiplo = TRUE;
+         }
+    }
+
+    if(cero==TRUE && multiplo==FALSE)
+    {
+        printf("El 0 fue un resultado del giro de la ruleta.\n");
+
+    }else if(multiplo==TRUE && cero==FALSE)
+    {
+        printf("Hubo múltiplos de 10 en los resultados del giro de la ruleta.\n");
+
+    }else if(cero==TRUE && multiplo==TRUE)
+    {
+        printf("En los resultados del giro de la ruleta salieron tanto el 0 como múltiplos de 10");
+    }else
+    {
+        printf("En los resultados del giro de la ruleta no salió el 0 ni ningún múltiplo de 10");
+    }
+
+}
+
+void numeroPrimo(int *arrayGiros, int nRondas)
+{
+    int i, j;
+    int cont;
+    int primo = 0;
+    for(i=0; i<nRondas; i++)
+    {
+        cont = 0;
+        for(j=1; j<=arrayGiros[i]; j++)
+        {
+            if(arrayGiros[i]%j==0)
+            {
+                cont ++;
+            }
+        }
+        if(cont==2)
+        {
+            primo++;
         }
 
-        printf("El promedio de apuestas por rondas es: %.2f.\n", nApuestas / nRondas);
+    }
 
-        porcentajeColor(conjuntoApuestas, arraynApuestas, nRondas);
+    if(primo>0)
+    {
+        if(primo==1)
+        {
+            printf("La bola cayó una vez en un número primo\n");
+        }else
+        {
+            printf("La bola cayó %d veces en un número primo\n", primo);
+        }
+    }else
+    {
+        printf("La bola no cayó en ningún número primo\n");
+    }
+}
 
-        apuestaMayorValor(conjuntoApuestas, arraynApuestas, nRondas);
-
-    return 0;
+int giroRuleta()
+{
+    srand(time(NULL));
+    int giro = 0;
+    giro = rand()%38;
+    return giro;
 }
